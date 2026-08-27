@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { GithubIcon } from "../components/icons";
 import { apiFetch } from "../utils/api";
+import { useSEO } from "../utils/useSEO";
 
 function useSection() {
   const ref = useRef(null);
@@ -27,6 +28,13 @@ function useSection() {
 const filters = ["All", "Python", "Web", "API", "Automation"];
 
 export default function Projects() {
+  useSEO({
+    title: "Projects Portfolio",
+    description: "Explore software projects created by Sweta Pandey — Python automation, Weather REST API app, Web Scraper, and React applications.",
+    keywords: "Sweta Pandey Projects, Python Projects, React Portfolio Projects, Web Scraper Python",
+    canonical: "https://swetapandey.dev/projects"
+  });
+
   const [activeFilter, setActiveFilter] = useState("All");
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,26 +46,25 @@ export default function Projects() {
       if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
         setProjectsList(res.data);
       } else {
-        // Fallback default projects if DB is empty
         setProjectsList([
           {
             _id: "1",
             title: "Python File Organizer",
-            descriptions: "An automation tool that intelligently sorts files in a directory into categorized sub-folders by file type — boosting workflow efficiency.",
+            descriptions: "An automation script that sorts cluttered directory files into clean sub-folders by extension.",
             techStack: ["Python", "os", "shutil"],
             gitHub: "https://github.com/SwetaPandey123",
           },
           {
             _id: "2",
             title: "Weather Information App",
-            descriptions: "A real-time weather application that fetches temperature, conditions, and forecasts from a public weather REST API.",
+            descriptions: "A real-time weather metrics application built with Python fetching forecast data from a public REST API.",
             techStack: ["Python", "REST API", "requests"],
             gitHub: "https://github.com/SwetaPandey123",
           },
           {
             _id: "3",
             title: "Web Scraper",
-            descriptions: "A configurable data extraction tool that crawls web pages and parses structured content into clean datasets.",
+            descriptions: "A data collection pipeline parsing web page contents into structured datasets using BeautifulSoup.",
             techStack: ["Python", "BeautifulSoup", "Requests"],
             gitHub: "https://github.com/SwetaPandey123",
           },
@@ -74,32 +81,32 @@ export default function Projects() {
         );
 
   return (
-    <div className="min-h-screen pt-20">
+    <article className="min-h-screen pt-20">
       {/* Header */}
-      <section className="py-16 bg-gradient-to-br from-teal-50/60 to-transparent dark:from-slate-900 dark:to-slate-950">
+      <section className="py-16 bg-gradient-to-br from-teal-50/70 via-transparent to-transparent dark:from-slate-900 dark:to-slate-950">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <p className="text-teal-600 dark:text-teal-400 font-semibold text-sm tracking-widest uppercase mb-2">
-            What I've Built
+          <p className="text-teal-600 dark:text-teal-400 font-semibold text-xs tracking-widest uppercase mb-2">
+            Software Portfolio
           </p>
           <h1
             className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
-            All Projects
+            All Projects & Builds
           </h1>
         </div>
       </section>
 
-      {/* Filter bar */}
-      <section className="py-6 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 sticky top-16 z-30">
+      {/* Filter Bar */}
+      <nav aria-label="Project Categories" className="py-6 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 sticky top-16 z-30">
         <div className="max-w-6xl mx-auto px-6 flex flex-wrap gap-2 justify-center">
           {filters.map((f) => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
                 activeFilter === f
-                  ? "bg-teal-600 text-white shadow-md"
+                  ? "bg-teal-600 text-white shadow-xs"
                   : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-slate-700"
               }`}
             >
@@ -107,28 +114,28 @@ export default function Projects() {
             </button>
           ))}
         </div>
-      </section>
+      </nav>
 
       {/* Projects Grid */}
       <section ref={gridRef} className="py-16 bg-gray-50/50 dark:bg-slate-950">
         <div className="max-w-6xl mx-auto px-6">
           {loading ? (
-            <div className="text-center py-20 text-gray-500 dark:text-gray-400">
-              Loading projects from backend...
+            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-sm font-medium">
+              Loading projects...
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((p) => (
-                <div
+                <article
                   key={p._id || p.title}
-                  className="fade-up card-lift bg-white dark:bg-slate-900 rounded-2xl p-7 border border-gray-100 dark:border-slate-800 shadow-sm flex flex-col justify-between"
+                  className="fade-up card-lift bg-white dark:bg-slate-900 rounded-2xl p-7 border border-gray-100 dark:border-slate-800 shadow-xs flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex flex-wrap gap-1.5 mb-4">
                       {(p.techStack || []).map((t) => (
                         <span
                           key={t}
-                          className="text-xs font-semibold px-2.5 py-1 bg-teal-50 dark:bg-slate-800 text-teal-700 dark:text-teal-300 rounded-md"
+                          className="text-[11px] font-semibold px-2.5 py-1 bg-teal-50 dark:bg-slate-800 text-teal-700 dark:text-teal-300 rounded-md"
                         >
                           {t}
                         </span>
@@ -140,7 +147,7 @@ export default function Projects() {
                     >
                       {p.title}
                     </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                       {p.descriptions || p.description}
                     </p>
                   </div>
@@ -150,28 +157,18 @@ export default function Projects() {
                         href={p.gitHub}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1.5 text-sm font-semibold text-teal-600 dark:text-teal-400 hover:underline"
+                        className="flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
                       >
-                        <GithubIcon size={16} /> GitHub <ExternalLink size={12} />
-                      </a>
-                    )}
-                    {p.liveLINK && (
-                      <a
-                        href={p.liveLINK}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-1.5 text-sm font-semibold text-teal-600 dark:text-teal-400 hover:underline"
-                      >
-                        Live Demo <ExternalLink size={12} />
+                        <GithubIcon size={15} /> GitHub Code <ExternalLink size={12} />
                       </a>
                     )}
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           )}
         </div>
       </section>
-    </div>
+    </article>
   );
 }

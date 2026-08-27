@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { GraduationCap, Briefcase, MapPin, Calendar } from "lucide-react";
+import { GraduationCap, Briefcase, MapPin } from "lucide-react";
 import { apiFetch } from "../utils/api";
+import { useSEO } from "../utils/useSEO";
 
 function useSection() {
   const ref = useRef(null);
@@ -24,6 +25,13 @@ function useSection() {
 }
 
 export default function ExperiencePage() {
+  useSEO({
+    title: "Experience & Education Timeline",
+    description: "Sweta Pandey's Work Experience as Personal Tutor at Edushala Bhopal and Education at LNCT Bhopal.",
+    keywords: "Sweta Pandey Experience, Edushala Bhopal Tutor, LNCT Bhopal CSE Education",
+    canonical: "https://swetapandey.dev/experience"
+  });
+
   const [experienceList, setExperienceList] = useState([]);
   const [loading, setLoading] = useState(true);
   const sectionRef = useSection();
@@ -34,14 +42,13 @@ export default function ExperiencePage() {
       if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
         setExperienceList(res.data);
       } else {
-        // Default fallback items
         setExperienceList([
           {
             _id: "1",
             title: "Personal Tutor",
             organization: "Edushala, Bhopal",
             type: "work",
-            description: "Teaching Mathematics, Science, English, Hindi, EVS, and GK to Nursery-to-Class-6 students using storytelling, visual aids, and interactive methods.",
+            description: "Tutoring Nursery to Class 6 students in Mathematics, Science, English, Hindi, EVS, and General Knowledge through creative storytelling and visual techniques.",
             location: "Bhopal, MP",
             current: true,
           },
@@ -50,7 +57,7 @@ export default function ExperiencePage() {
             title: "B.Tech in Computer Science & Engineering",
             organization: "Lakshmi Narain College of Technology (LNCT)",
             type: "education",
-            description: "Focusing on software development, Data Structures, OOP, DBMS, and Web Technologies.",
+            description: "Pursuing degree with focus on Data Structures, OOP, Database Systems, Operating Systems, and Web Technologies.",
             location: "Bhopal, MP",
             current: true,
           },
@@ -59,7 +66,7 @@ export default function ExperiencePage() {
             title: "Diploma in Computer Science & Engineering",
             organization: "Patel College of Science & Technology (PCST)",
             type: "education",
-            description: "Covered core computer fundamentals, programming in C, Python, and web design basics.",
+            description: "Completed diploma covering C programming, Python basics, computer networks, and system design.",
             location: "Bhopal, MP",
             current: false,
           },
@@ -69,12 +76,12 @@ export default function ExperiencePage() {
   }, []);
 
   return (
-    <div className="min-h-screen pt-20">
+    <article className="min-h-screen pt-20">
       {/* Header */}
-      <section className="py-16 bg-gradient-to-br from-teal-50/60 to-transparent dark:from-slate-900 dark:to-slate-950">
+      <section className="py-16 bg-gradient-to-br from-teal-50/70 via-transparent to-transparent dark:from-slate-900 dark:to-slate-950">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <p className="text-teal-600 dark:text-teal-400 font-semibold text-sm tracking-widest uppercase mb-2">
-            Career & Academic Background
+          <p className="text-teal-600 dark:text-teal-400 font-semibold text-xs tracking-widest uppercase mb-2">
+            Career Timeline
           </p>
           <h1
             className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white"
@@ -89,7 +96,7 @@ export default function ExperiencePage() {
       <section ref={sectionRef} className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-6">
           {loading ? (
-            <div className="text-center py-20 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-xs">
               Loading experience timeline...
             </div>
           ) : (
@@ -97,7 +104,7 @@ export default function ExperiencePage() {
               {experienceList.map((item) => (
                 <div key={item._id || item.title} className="fade-up relative">
                   <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-teal-600 dark:bg-teal-400 border-2 border-white dark:border-slate-900 ring-2 ring-teal-200 dark:ring-teal-900" />
-                  <div className="bg-gray-50 dark:bg-slate-800 rounded-2xl p-6 border border-gray-100 dark:border-slate-700/60 shadow-sm">
+                  <div className="bg-gray-50 dark:bg-slate-800/80 rounded-2xl p-6 border border-gray-100 dark:border-slate-700/60 shadow-xs">
                     <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -113,21 +120,21 @@ export default function ExperiencePage() {
                             {item.title}
                           </h3>
                         </div>
-                        <p className="text-sm font-semibold text-teal-700 dark:text-teal-400">
+                        <p className="text-xs font-semibold text-teal-700 dark:text-teal-400">
                           {item.organization}
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         {item.location && (
-                          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-1">
+                          <div className="flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400 mb-1">
                             <MapPin size={12} /> {item.location}
                           </div>
                         )}
                         <span
-                          className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                             item.current
-                              ? "bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300"
-                              : "bg-gray-200 text-gray-600 dark:bg-slate-700 dark:text-gray-300"
+                              ? "bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300"
+                              : "bg-gray-200 text-gray-700 dark:bg-slate-700 dark:text-gray-300"
                           }`}
                         >
                           {item.current ? "Ongoing / Active" : "Completed"}
@@ -135,7 +142,7 @@ export default function ExperiencePage() {
                       </div>
                     </div>
                     {item.description && (
-                      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                      <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                         {item.description}
                       </p>
                     )}
@@ -146,6 +153,6 @@ export default function ExperiencePage() {
           )}
         </div>
       </section>
-    </div>
+    </article>
   );
 }
