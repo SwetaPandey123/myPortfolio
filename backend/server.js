@@ -4,7 +4,8 @@ const connectDB  = require('./src/config/db');
 const projectRoutes = require('./src/routes/projectRoutes')
 const skillRoutes = require('./src/routes/skillRoutes')
 const experienceRoutes = require('./src/routes/experienceRoutes');
-const auth = require('./src/routes/authRoutes');
+const authroutes = require('./src/routes/authRoutes');
+const resumeRoutes  = require('./src/routes/resumeRoutes')
 
 
 const app = express()
@@ -17,7 +18,8 @@ connectDB()
 app.use('/api/project' , projectRoutes)
 app.use('/api/skills' , skillRoutes )
 app.use('/api/experience' , experienceRoutes)
-app.use('/api/auth', auth)
+app.use('/api/auth', authroutes)
+app.use('/api/resume', resumeRoutes )
 
  
 
