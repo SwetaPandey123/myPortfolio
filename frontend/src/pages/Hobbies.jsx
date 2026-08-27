@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import {
   BookOpen,
   Star,
@@ -9,28 +8,8 @@ import {
   Users,
   Palette,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useSEO } from "../utils/useSEO";
-
-function useSection() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.querySelectorAll(".fade-up").forEach((child, i) => {
-            setTimeout(() => child.classList.add("visible"), i * 100);
-          });
-        }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
 
 const hobbyTiles = [
   { icon: <BookOpen size={22} />, label: "Reading", caption: "Sci-fi, tech articles, and personal development books" },
@@ -48,9 +27,6 @@ export default function Hobbies() {
     keywords: "Sweta Pandey Hobbies, Edushala Bhopal Personal Tutor, Education",
     canonical: "https://swetapandey.dev/hobbies"
   });
-
-  const teachRef = useSection();
-  const hobbiesRef = useSection();
 
   return (
     <article className="min-h-screen pt-20">
@@ -70,10 +46,16 @@ export default function Hobbies() {
       </section>
 
       {/* Teaching Feature Card */}
-      <section ref={teachRef} className="py-20 bg-white dark:bg-slate-900">
+      <section className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="fade-up bg-gradient-to-br from-teal-700 to-teal-800 dark:from-teal-800 dark:to-slate-900 rounded-3xl p-10 md:p-14 text-white relative overflow-hidden shadow-xl">
-            <div className="relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-br from-teal-700 to-teal-800 dark:from-teal-800 dark:to-slate-900 rounded-3xl p-10 md:p-14 text-white relative overflow-hidden shadow-xl"
+          >
+            <div className="relative z-10">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                   <Users size={20} />
@@ -108,14 +90,14 @@ export default function Hobbies() {
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Hobby Tiles */}
-      <section ref={hobbiesRef} className="py-20 bg-gray-50/50 dark:bg-slate-950">
+      <section className="py-20 bg-gray-50/50 dark:bg-slate-950">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="fade-up text-center mb-14">
+          <div className="text-center mb-14">
             <h2
               className="text-2xl font-bold text-gray-900 dark:text-white"
               style={{ fontFamily: "Poppins, sans-serif" }}
@@ -124,10 +106,15 @@ export default function Hobbies() {
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {hobbyTiles.map(({ icon, label, caption }) => (
-              <div
+            {hobbyTiles.map(({ icon, label, caption }, i) => (
+              <motion.div
                 key={label}
-                className="fade-up card-lift bg-white dark:bg-slate-900 rounded-2xl p-6 border border-gray-100 dark:border-slate-800 shadow-xs text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
+                className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-gray-200/60 dark:border-slate-800/60 shadow-xs text-center hover:border-teal-500 transition-all"
               >
                 <div className="w-12 h-12 mx-auto rounded-2xl bg-teal-50 dark:bg-slate-800 flex items-center justify-center text-teal-600 dark:text-teal-400 mb-4">
                   {icon}
@@ -139,7 +126,7 @@ export default function Hobbies() {
                   {label}
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug">{caption}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

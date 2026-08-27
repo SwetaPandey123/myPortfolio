@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2, Plus, LogOut, Home, FileText, CheckCircle2, ShieldCheck, Mail } from "lucide-react";
+import { Trash2, Plus, LogOut, Home, FileText, CheckCircle2, ShieldCheck, Mail } from "lucide-react";
 import { apiFetch, setAuthToken } from "../utils/api";
 
 export default function AdminEdit() {
@@ -13,7 +13,6 @@ export default function AdminEdit() {
   const [resumeUrl, setResumeUrl] = useState("");
   const [feedbackMsg, setFeedbackMsg] = useState(null);
 
-  // Form states
   const [newProject, setNewProject] = useState({ title: "", descriptions: "", techStack: "", gitHub: "", liveLINK: "" });
   const [newSkill, setNewSkill] = useState({ name: "", category: "technical", proficiency: "Intermediate" });
   const [newExperience, setNewExperience] = useState({ title: "", organization: "", type: "work", description: "", location: "" });
@@ -40,7 +39,6 @@ export default function AdminEdit() {
     navigate("/");
   };
 
-  // Add Project
   const handleAddProject = async (e) => {
     e.preventDefault();
     const payload = {
@@ -60,7 +58,6 @@ export default function AdminEdit() {
     }
   };
 
-  // Delete Project
   const handleDeleteProject = async (id) => {
     if (!window.confirm("Are you sure you want to delete this project?")) return;
     const res = await apiFetch(`/project/delete/${id}`, { method: "DELETE" });
@@ -70,7 +67,6 @@ export default function AdminEdit() {
     }
   };
 
-  // Add Skill
   const handleAddSkill = async (e) => {
     e.preventDefault();
     const res = await apiFetch("/skills/create", {
@@ -86,7 +82,6 @@ export default function AdminEdit() {
     }
   };
 
-  // Delete Skill
   const handleDeleteSkill = async (id) => {
     if (!window.confirm("Are you sure you want to delete this skill?")) return;
     const res = await apiFetch(`/skills/delete/${id}`, { method: "DELETE" });
@@ -96,7 +91,6 @@ export default function AdminEdit() {
     }
   };
 
-  // Add Experience
   const handleAddExperience = async (e) => {
     e.preventDefault();
     const res = await apiFetch("/experience/create", {
@@ -112,7 +106,6 @@ export default function AdminEdit() {
     }
   };
 
-  // Delete Experience
   const handleDeleteExperience = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     const res = await apiFetch(`/experience/delete/${id}`, { method: "DELETE" });
@@ -122,7 +115,6 @@ export default function AdminEdit() {
     }
   };
 
-  // Update Resume
   const handleUpdateResume = async (e) => {
     e.preventDefault();
     const res = await apiFetch("/resume/update", {
@@ -138,7 +130,6 @@ export default function AdminEdit() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 pt-16">
-      {/* Top Admin Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-teal-700 dark:bg-slate-900 text-white px-6 py-3 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2">
           <ShieldCheck size={18} />
@@ -160,7 +151,6 @@ export default function AdminEdit() {
         </div>
       </div>
 
-      {/* Notification Toast */}
       {feedbackMsg && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-teal-400 border border-teal-500 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-sm font-semibold animate-bounce">
           <CheckCircle2 size={18} /> {feedbackMsg}
@@ -168,7 +158,6 @@ export default function AdminEdit() {
       )}
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Navigation Tabs */}
         <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-slate-800 pb-4 mb-8">
           {[
             { id: "projects", label: "Projects" },
@@ -191,7 +180,6 @@ export default function AdminEdit() {
           ))}
         </div>
 
-        {/* TAB 1: PROJECTS */}
         {activeTab === "projects" && (
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm">
@@ -262,7 +250,6 @@ export default function AdminEdit() {
           </div>
         )}
 
-        {/* TAB 2: SKILLS */}
         {activeTab === "skills" && (
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm">
@@ -321,7 +308,6 @@ export default function AdminEdit() {
           </div>
         )}
 
-        {/* TAB 3: EXPERIENCE */}
         {activeTab === "experience" && (
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm">
@@ -392,7 +378,6 @@ export default function AdminEdit() {
           </div>
         )}
 
-        {/* TAB 4: RESUME URL */}
         {activeTab === "resume" && (
           <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-gray-200 dark:border-slate-800 max-w-xl shadow-sm">
             <h2 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
@@ -421,7 +406,6 @@ export default function AdminEdit() {
           </div>
         )}
 
-        {/* TAB 5: MESSAGES */}
         {activeTab === "messages" && (
           <div className="flex flex-col gap-4">
             <h2 className="font-bold text-gray-900 dark:text-white text-lg flex items-center gap-2">

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Mail,
-  Phone,
   MapPin,
   ExternalLink,
   ArrowRight,
@@ -93,7 +92,7 @@ export default function Home() {
       : techStackList.filter((t) => t.category === techCategory);
 
   return (
-    <article className="min-h-screen relative pt-20">
+    <article className="min-h-screen relative">
       {/* 3D WebGL Particle Background Canvas */}
       <ThreeCanvas variant="sphere" />
 
@@ -111,14 +110,14 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="flex-1 max-w-xl"
             >
-              {/* Availability Badge */}
+              {/* Availability Status Chip */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-600 dark:text-teal-400 text-xs font-bold mb-6">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 Available for Software Projects & Roles
               </div>
 
               <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-4"
+                className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4"
                 style={{ fontFamily: "Poppins, sans-serif" }}
               >
                 Hi, I'm <span className="text-teal-600 dark:text-teal-400">Sweta Pandey</span>{" "}
@@ -151,7 +150,7 @@ export default function Home() {
               </div>
             </motion.header>
 
-            {/* Profile Headshot */}
+            {/* Profile Avatar Frame */}
             <motion.figure
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}

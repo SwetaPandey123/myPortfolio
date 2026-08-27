@@ -1,27 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Calendar, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { useSEO } from "../utils/useSEO";
-
-function useSection() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.querySelectorAll(".fade-up").forEach((child, i) => {
-            setTimeout(() => child.classList.add("visible"), i * 100);
-          });
-        }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
 
 const posts = [
   {
@@ -61,7 +41,6 @@ export default function Blog() {
   });
 
   const [active, setActive] = useState("All");
-  const gridRef = useSection();
 
   const filtered = active === "All" ? posts : posts.filter((p) => p.category === active);
 
@@ -102,13 +81,17 @@ export default function Blog() {
       </nav>
 
       {/* Grid */}
-      <section ref={gridRef} className="py-16 bg-gray-50/50 dark:bg-slate-950">
+      <section className="py-16 bg-gray-50/50 dark:bg-slate-950">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
-            {filtered.map((post) => (
-              <article
+            {filtered.map((post, i) => (
+              <motion.article
                 key={post.id}
-                className="fade-up card-lift bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-xs overflow-hidden flex flex-col"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-200/60 dark:border-slate-800/60 shadow-xs overflow-hidden flex flex-col hover:border-teal-500 transition-all hover:-translate-y-1"
               >
                 <div className="relative h-44 bg-gray-100 dark:bg-slate-800 overflow-hidden">
                   <img
@@ -138,7 +121,7 @@ export default function Blog() {
                     Read Article <ArrowRight size={14} />
                   </button>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </div>

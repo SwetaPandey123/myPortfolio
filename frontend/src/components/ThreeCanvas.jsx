@@ -8,7 +8,6 @@ export default function ThreeCanvas({ variant = "sphere" }) {
     const container = mountRef.current;
     if (!container) return;
 
-    // Scene, Camera, Renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -23,12 +22,10 @@ export default function ThreeCanvas({ variant = "sphere" }) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Objects
     let mesh;
     let particlesMesh;
 
     if (variant === "knot") {
-      // 3D Torus Knot Geometry for About page (Advance 3D feel)
       const geometry = new THREE.TorusKnotGeometry(1.2, 0.35, 128, 32);
       const material = new THREE.MeshStandardMaterial({
         color: 0x0d9488,
@@ -39,14 +36,12 @@ export default function ThreeCanvas({ variant = "sphere" }) {
       mesh = new THREE.Mesh(geometry, material);
       scene.add(mesh);
 
-      // Ambient & Point Light
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambientLight);
       const pointLight = new THREE.PointLight(0x14b8a6, 3, 100);
       pointLight.position.set(5, 5, 5);
       scene.add(pointLight);
     } else {
-      // Floating Particle Galaxy / Sphere for Home / Hero
       const particlesCount = 1200;
       const posArray = new Float32Array(particlesCount * 3);
 
@@ -72,7 +67,6 @@ export default function ThreeCanvas({ variant = "sphere" }) {
       scene.add(particlesMesh);
     }
 
-    // Mouse interactivity
     let mouseX = 0;
     let mouseY = 0;
 
@@ -83,7 +77,6 @@ export default function ThreeCanvas({ variant = "sphere" }) {
 
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Resize listener
     const handleResize = () => {
       if (!container) return;
       camera.aspect = container.clientWidth / container.clientHeight;
@@ -93,7 +86,6 @@ export default function ThreeCanvas({ variant = "sphere" }) {
 
     window.addEventListener("resize", handleResize);
 
-    // Animation Loop
     let animationFrameId;
     const clock = new THREE.Clock();
 
@@ -120,12 +112,11 @@ export default function ThreeCanvas({ variant = "sphere" }) {
 
     animate();
 
-    // Cleanup
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
-      if (container.contains(renderer.domElement)) {
+      if (container && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
     };

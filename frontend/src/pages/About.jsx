@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Award, GraduationCap, BookOpen, Heart, Sparkles } from "lucide-react";
+import { Award, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSEO } from "../utils/useSEO";
 import ThreeCanvas from "../components/ThreeCanvas";

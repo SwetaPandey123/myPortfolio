@@ -89,7 +89,6 @@ export default function ExperiencePage() {
                   viewport={{ once: true }}
                   className="relative"
                 >
-                  {/* Glowing Connected Timeline Node */}
                   <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-teal-500 border-2 border-white dark:border-slate-900 ring-4 ring-teal-500/20" />
                   
                   <div className="bg-gray-50 dark:bg-slate-800/80 rounded-3xl p-6 border border-gray-200/60 dark:border-slate-700/60 shadow-xs hover:border-teal-500 transition-all">

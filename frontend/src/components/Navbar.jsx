@@ -43,8 +43,8 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${
         scrolled
-          ? "bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm border-b border-gray-200/50 dark:border-slate-800/50"
-          : "bg-white/40 dark:bg-slate-950/40 backdrop-blur-md border-b border-gray-100/30 dark:border-slate-800/30"
+          ? "bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl shadow-xs border-b border-gray-200/50 dark:border-slate-800/50"
+          : "bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-gray-100/30 dark:border-slate-800/30"
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 w-full flex items-center justify-between">
@@ -52,11 +52,11 @@ export default function Navbar() {
           to="/"
           className="font-display font-bold text-xl tracking-tight text-teal-600 dark:text-teal-400 flex items-center gap-2"
         >
-          <span className="w-3 h-3 rounded-full bg-teal-500 animate-pulse" />
+          <span className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse" />
           Sweta Pandey
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-6">
           {navLinks.map(({ label, to }) =>
             to.startsWith("/#") ? (
@@ -82,17 +82,17 @@ export default function Navbar() {
             )
           )}
 
-          {/* Theme Toggle Button (Light / Dark / System) */}
+          {/* Theme Preference Toggle */}
           <button
             onClick={toggleTheme}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 dark:border-slate-700 bg-gray-100/60 dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 hover:bg-teal-50 dark:hover:bg-slate-700 transition-all text-xs font-semibold"
-            aria-label="Toggle Theme Preference"
-            title={`Current: ${themeMode.toUpperCase()} (Click to toggle)`}
+            aria-label="Toggle Theme"
+            title={`Mode: ${themeMode.toUpperCase()} (Click to change)`}
           >
             {themeMode === "light" && <Sun size={14} className="text-amber-500" />}
             {themeMode === "dark" && <Moon size={14} className="text-teal-400" />}
             {themeMode === "system" && <Monitor size={14} className="text-indigo-400" />}
-            <span className="capitalize">{themeMode}</span>
+            <span className="capitalize text-[11px]">{themeMode}</span>
           </button>
 
           {/* Resume Button */}
@@ -105,7 +105,7 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Mobile menu controls */}
+        {/* Mobile controls */}
         <div className="flex items-center gap-3 md:hidden">
           <button
             onClick={toggleTheme}
@@ -116,14 +116,14 @@ export default function Navbar() {
           <button
             className="text-gray-700 dark:text-gray-200"
             onClick={() => setOpen(!open)}
-            aria-label="Toggle Navigation Drawer"
+            aria-label="Toggle Menu"
           >
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Drawer */}
       {open && (
         <div className="md:hidden absolute top-20 left-0 right-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-b border-gray-200 dark:border-slate-800 shadow-xl px-6 py-6">
           <nav className="flex flex-col gap-3">

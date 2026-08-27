@@ -2,12 +2,10 @@ import { useEffect } from "react";
 
 export function useSEO({ title, description, keywords, canonical }) {
   useEffect(() => {
-    // Title
     if (title) {
       document.title = `${title} | Sweta Pandey — Full Stack Developer & Educator`;
     }
 
-    // Description Meta
     if (description) {
       let metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
@@ -20,7 +18,6 @@ export function useSEO({ title, description, keywords, canonical }) {
       }
     }
 
-    // Keywords Meta
     if (keywords) {
       let metaKey = document.querySelector('meta[name="keywords"]');
       if (metaKey) {
@@ -28,7 +25,6 @@ export function useSEO({ title, description, keywords, canonical }) {
       }
     }
 
-    // Canonical link
     if (canonical) {
       let linkCanonical = document.querySelector('link[rel="canonical"]');
       if (linkCanonical) {
