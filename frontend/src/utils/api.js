@@ -1,4 +1,8 @@
-const BASE_URL = "http://localhost:3002/api";
+const LIVE_BACKEND_URL = "https://myportfolio-owi0.onrender.com/api";
+const LOCAL_BACKEND_URL = "http://localhost:3002/api";
+
+// Default to live production URL, with fallback logic
+export const BASE_URL = import.meta.env.VITE_BACKEND_URL || LIVE_BACKEND_URL;
 
 export const getAuthToken = () => localStorage.getItem("token");
 
@@ -29,7 +33,16 @@ export const apiFetch = async (endpoint, options = {}) => {
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error(`API Error on ${endpoint}:`, error);
-    return { success: false, message: error.message };
+    console.warn(`Primary backend (${BASE_URL}) unreachable, attempting local fallback...`, error);
+    try {
+      const resLocal = await fetch(`${LOCAL_BACKEND_URL}${endpoint}`, {
+        ...options,
+        headers,
+      });
+      return await resLocal.json();
+    } catch (localErr) {
+      console.error(`API Error on ${endpoint}:`, localErr);
+      return { success: false, message: localErr.message };
+    }
   }
 };

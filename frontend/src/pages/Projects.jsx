@@ -1,29 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { GithubIcon } from "../components/icons";
 import { apiFetch } from "../utils/api";
 import { useSEO } from "../utils/useSEO";
-
-function useSection() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.querySelectorAll(".fade-up").forEach((child, i) => {
-            setTimeout(() => child.classList.add("visible"), i * 80);
-          });
-        }
-      },
-      { threshold: 0.05 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
 
 const filters = ["All", "Python", "Web", "API", "Automation"];
 
@@ -38,7 +18,6 @@ export default function Projects() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [projectsList, setProjectsList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const gridRef = useSection();
 
   useEffect(() => {
     apiFetch("/project/all").then((res) => {
@@ -98,7 +77,7 @@ export default function Projects() {
       </section>
 
       {/* Filter Bar */}
-      <nav aria-label="Project Categories" className="py-6 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 sticky top-16 z-30">
+      <nav aria-label="Project Categories" className="py-6 bg-white dark:bg-slate-900 border-b border-gray-200/60 dark:border-slate-800/60 sticky top-20 z-30">
         <div className="max-w-6xl mx-auto px-6 flex flex-wrap gap-2 justify-center">
           {filters.map((f) => (
             <button
@@ -117,55 +96,62 @@ export default function Projects() {
       </nav>
 
       {/* Projects Grid */}
-      <section ref={gridRef} className="py-16 bg-gray-50/50 dark:bg-slate-950">
+      <section className="py-16 bg-gray-50/50 dark:bg-slate-950">
         <div className="max-w-6xl mx-auto px-6">
           {loading ? (
-            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-sm font-medium">
+            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-xs font-semibold">
               Loading projects...
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((p) => (
-                <article
-                  key={p._id || p.title}
-                  className="fade-up card-lift bg-white dark:bg-slate-900 rounded-2xl p-7 border border-gray-100 dark:border-slate-800 shadow-xs flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {(p.techStack || []).map((t) => (
-                        <span
-                          key={t}
-                          className="text-[11px] font-semibold px-2.5 py-1 bg-teal-50 dark:bg-slate-800 text-teal-700 dark:text-teal-300 rounded-md"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                    <h2
-                      className="font-bold text-gray-900 dark:text-white text-lg mb-3"
-                      style={{ fontFamily: "Poppins, sans-serif" }}
-                    >
-                      {p.title}
-                    </h2>
-                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                      {p.descriptions || p.description}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4 border-t border-gray-100 dark:border-slate-800 pt-4">
-                    {p.gitHub && (
-                      <a
-                        href={p.gitHub}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-1.5 text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline"
+            <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence>
+                {filtered.map((p) => (
+                  <motion.article
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    key={p._id || p.title}
+                    className="bg-white dark:bg-slate-900 rounded-3xl p-7 border border-gray-200/60 dark:border-slate-800/60 shadow-xs flex flex-col justify-between hover:border-teal-500 transition-all hover:-translate-y-1"
+                  >
+                    <div>
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {(p.techStack || []).map((t) => (
+                          <span
+                            key={t}
+                            className="text-[11px] font-semibold px-2.5 py-1 bg-teal-50 dark:bg-slate-800 text-teal-700 dark:text-teal-300 rounded-md"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                      <h2
+                        className="font-bold text-gray-900 dark:text-white text-lg mb-3"
+                        style={{ fontFamily: "Poppins, sans-serif" }}
                       >
-                        <GithubIcon size={15} /> GitHub Code <ExternalLink size={12} />
-                      </a>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
+                        {p.title}
+                      </h2>
+                      <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                        {p.descriptions || p.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 border-t border-gray-100 dark:border-slate-800 pt-4">
+                      {p.gitHub && (
+                        <a
+                          href={p.gitHub}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline"
+                        >
+                          <GithubIcon size={15} /> GitHub Code <ExternalLink size={12} />
+                        </a>
+                      )}
+                    </div>
+                  </motion.article>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           )}
         </div>
       </section>

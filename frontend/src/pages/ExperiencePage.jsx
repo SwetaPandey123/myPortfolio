@@ -1,28 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { GraduationCap, Briefcase, MapPin } from "lucide-react";
+import { motion } from "framer-motion";
 import { apiFetch } from "../utils/api";
 import { useSEO } from "../utils/useSEO";
-
-function useSection() {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.querySelectorAll(".fade-up").forEach((child, i) => {
-            setTimeout(() => child.classList.add("visible"), i * 100);
-          });
-        }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
 
 export default function ExperiencePage() {
   useSEO({
@@ -34,7 +14,6 @@ export default function ExperiencePage() {
 
   const [experienceList, setExperienceList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const sectionRef = useSection();
 
   useEffect(() => {
     apiFetch("/experience/").then((res) => {
@@ -93,18 +72,27 @@ export default function ExperiencePage() {
       </section>
 
       {/* Timeline Section */}
-      <section ref={sectionRef} className="py-20 bg-white dark:bg-slate-900">
+      <section className="py-20 bg-white dark:bg-slate-900">
         <div className="max-w-3xl mx-auto px-6">
           {loading ? (
-            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-xs">
+            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-xs font-semibold">
               Loading experience timeline...
             </div>
           ) : (
-            <div className="relative pl-6 border-l-2 border-teal-200 dark:border-teal-800 flex flex-col gap-10">
-              {experienceList.map((item) => (
-                <div key={item._id || item.title} className="fade-up relative">
-                  <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-teal-600 dark:bg-teal-400 border-2 border-white dark:border-slate-900 ring-2 ring-teal-200 dark:ring-teal-900" />
-                  <div className="bg-gray-50 dark:bg-slate-800/80 rounded-2xl p-6 border border-gray-100 dark:border-slate-700/60 shadow-xs">
+            <div className="relative pl-6 border-l-2 border-teal-500/40 dark:border-teal-500/30 flex flex-col gap-10">
+              {experienceList.map((item, i) => (
+                <motion.div
+                  key={item._id || item.title}
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                  className="relative"
+                >
+                  {/* Glowing Connected Timeline Node */}
+                  <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-teal-500 border-2 border-white dark:border-slate-900 ring-4 ring-teal-500/20" />
+                  
+                  <div className="bg-gray-50 dark:bg-slate-800/80 rounded-3xl p-6 border border-gray-200/60 dark:border-slate-700/60 shadow-xs hover:border-teal-500 transition-all">
                     <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -120,7 +108,7 @@ export default function ExperiencePage() {
                             {item.title}
                           </h3>
                         </div>
-                        <p className="text-xs font-semibold text-teal-700 dark:text-teal-400">
+                        <p className="text-xs font-semibold text-teal-600 dark:text-teal-400">
                           {item.organization}
                         </p>
                       </div>
@@ -147,7 +135,7 @@ export default function ExperiencePage() {
                       </p>
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
