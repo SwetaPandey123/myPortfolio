@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
 
 /* Color Variables & Theme System */
 :root {
@@ -70,15 +71,6 @@ body {
 .font-display {
   font-family: 'Poppins', sans-serif;
 }
-
-/* Theme Classes */
-.bg-theme-primary { background-color: var(--bg-primary); }
-.bg-theme-secondary { background-color: var(--bg-secondary); }
-.bg-theme-card { background-color: var(--bg-card); }
-.text-theme-primary { color: var(--text-primary); }
-.text-theme-secondary { color: var(--text-secondary); }
-.text-theme-muted { color: var(--text-muted); }
-.border-theme { border-color: var(--border-color); }
 
 /* Custom Animations */
 .fade-up {
