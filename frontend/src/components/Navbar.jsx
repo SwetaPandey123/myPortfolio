@@ -36,9 +36,11 @@ export default function Navbar({ resumeUrl }) {
       >
         {/* Brand */}
         <Link href="/" className="flex items-center space-x-3 group shrink-0">
-          <div className="w-9 h-9 rounded-xl btn-gradient flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            SP
-          </div>
+          <img
+            src="https://res.cloudinary.com/akphv6j6/image/upload/v1787869354/61476690723.png"
+            alt="Sweta Pandey"
+            className="w-9 h-9 rounded-xl object-cover object-top shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform border-2 border-indigo-400"
+          />
           <div className="hidden sm:block">
             <span className="font-extrabold text-sm tracking-tight text-slate-900 block leading-tight">
               Sweta Pandey

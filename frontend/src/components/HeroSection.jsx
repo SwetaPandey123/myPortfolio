@@ -150,11 +150,13 @@ export default function HeroSection({ resumeUrl }) {
             <div className="absolute -inset-1 rounded-3xl btn-gradient blur-xl opacity-25"></div>
 
             <div className="relative bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6 text-center">
-              {/* Profile Avatar Badge */}
-              <div className="relative w-32 h-32 mx-auto rounded-2xl p-1.5 btn-gradient shadow-lg">
-                <div className="w-full h-full rounded-xl bg-slate-900 flex items-center justify-center text-white text-4xl font-black tracking-wider">
-                  SP
-                </div>
+              {/* Profile Photo */}
+              <div className="relative w-32 h-32 mx-auto rounded-2xl p-1 btn-gradient shadow-lg">
+                <img
+                  src="https://res.cloudinary.com/akphv6j6/image/upload/v1787869354/61476690723.png"
+                  alt="Sweta Pandey"
+                  className="w-full h-full rounded-xl object-cover object-top bg-slate-100"
+                />
               </div>
 
               <div>
