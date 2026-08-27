@@ -1,8 +1,5 @@
 import 'remixicon/fonts/remixicon.css';
 import './globals.css';
-import dynamic from 'next/dynamic';
-
-const SmoothScroll = dynamic(() => import('@/components/SmoothScroll'), { ssr: false });
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://my-portfolio-jet-phi-22.vercel.app'),
@@ -108,7 +105,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="antialiased bg-slate-50 text-slate-900 selection:bg-indigo-500 selection:text-white">
-        <SmoothScroll>{children}</SmoothScroll>
+        {children}
       </body>
     </html>
   );

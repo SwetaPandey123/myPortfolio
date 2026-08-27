@@ -11,7 +11,6 @@
   "dependencies": {
     "@react-three/drei": "^9.121.5",
     "@react-three/fiber": "^8.18.0",
-    "@studio-freight/lenis": "^1.0.42",
     "axios": "^1.8.1",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
