@@ -58,8 +58,7 @@ const Login = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "OTP generated successfully! Check your email.",
-            otpCode: currentOtp // Provided for smooth admin login experience
+            message: "OTP sent to your email! Check your inbox."
         });
 
     } catch (error) {
@@ -138,8 +137,7 @@ const ResendOtp = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "New OTP sent successfully",
-            otpCode: currentOtp
+            message: "New OTP sent to your email!"
         });
     } catch (error) {
         console.error("Resend OTP Error:", error);

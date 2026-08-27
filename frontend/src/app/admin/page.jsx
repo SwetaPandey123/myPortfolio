@@ -8,7 +8,7 @@ import Link from 'next/link';
 export default function AdminPage() {
   const [token, setToken] = useState(null);
   const [step, setStep] = useState('credentials'); // 'credentials' | 'otp'
-  const [email, setEmail] = useState('pandeysweta612@gmail.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState('');
@@ -32,10 +32,7 @@ export default function AdminPage() {
     try {
       const res = await loginAdmin(email.trim(), password.trim());
       if (res.success) {
-        setMessage('OTP generated! Check your email or use the code below.');
-        if (res.otpCode) {
-          setOtp(String(res.otpCode));
-        }
+        setMessage('OTP sent to your registered email! Please check your inbox.');
         setStep('otp');
       } else {
         setError(res.message || 'Login failed');
