@@ -10,28 +10,28 @@ const Login = async (req, res) => {
     try {
         let { email, password } = req.body;
 
-        // Clean env variables by removing quotes and trimming
-        const envEmail = process.env.ADMIN_EMAIL ? process.env.ADMIN_EMAIL.replace(/['"]/g, '').trim() : 'pandeysweta612@gmail.com';
-        const envPassword = process.env.ADMIN_PASSWORD ? process.env.ADMIN_PASSWORD.replace(/['"]/g, '').trim() : '@Sweta#307';
+        // Get raw env values and clean them
+        const rawEnvPassword = process.env.ADMIN_PASSWORD || '@Sweta#307';
+        const envEmail = (process.env.ADMIN_EMAIL || 'pandeysweta612@gmail.com').replace(/['"]/g, '').trim();
+        const envPassword = rawEnvPassword.replace(/['"]/g, '').trim();
 
         const inputEmail = email ? String(email).replace(/['"]/g, '').trim().toLowerCase() : '';
-        const inputPassword = password ? String(password).replace(/['"]/g, '').trim() : '';
+        const inputPassword = password ? String(password).trim() : '';
 
-        console.log(`🔐 Login Attempt -> Input Email: "${inputEmail}", Env Email: "${envEmail}"`);
+        // Full debug log - visible in Render logs
+        console.log(`🔐 Login Debug:`);
+        console.log(`   Input email: "${inputEmail}"`);
+        console.log(`   Env email:   "${envEmail.toLowerCase()}"`);
+        console.log(`   Input pass length: ${inputPassword.length}`);
+        console.log(`   Env pass length:   ${envPassword.length}`);
+        console.log(`   Input pass chars: ${[...inputPassword].map(c => c.charCodeAt(0)).join(',')}`);
+        console.log(`   Env pass chars:   ${[...envPassword].map(c => c.charCodeAt(0)).join(',')}`);
 
-        const isEmailValid = inputEmail === envEmail.toLowerCase() || inputEmail === 'pandeysweta612@gmail.com';
-        
-        // Match against Render dashboard variations: '@Sweta#307', 'aSweta#307', '@Sweta#07', 'aSweta#07'
-        const isPasswordValid = inputPassword === envPassword || 
-                                inputPassword === '@Sweta#307' || 
-                                inputPassword === 'aSweta#307' ||
-                                inputPassword === '@Sweta#07' ||
-                                inputPassword === 'aSweta#07' ||
-                                inputPassword.toLowerCase() === envPassword.toLowerCase() ||
-                                inputPassword.replace('@', 'a') === envPassword;
+        const isEmailValid = inputEmail === envEmail.toLowerCase();
+        const isPasswordValid = inputPassword === envPassword;
 
         if (!isEmailValid || !isPasswordValid) {
-            console.warn("❌ Admin Login Failed: Invalid Credentials");
+            console.warn(`❌ Login FAILED - email match: ${isEmailValid}, pass match: ${isPasswordValid}`);
             return res.status(401).json({
                 success: false,
                 message: "Invalid email or password"
