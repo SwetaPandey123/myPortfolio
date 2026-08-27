@@ -236,7 +236,7 @@ export default async function AboutPage() {
         </div>
 
         {/* Bottom CTA Row */}
-        <div className="bg-slate-900 text-white p-8 sm:p-12 rounded-3xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="bg-slate-900 text-white p-8 sm:p-12 rounded-3xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 mb-16">
           <div className="space-y-2 text-center sm:text-left max-w-xl">
             <h3 className="text-2xl sm:text-3xl font-extrabold">Interested in working together?</h3>
             <p className="text-slate-300 text-xs sm:text-sm">
