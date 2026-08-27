@@ -14,11 +14,11 @@ const seedDatabase = async () => {
         await mongoose.connect(MONGODB_URI);
         console.log('Connected to MongoDB successfully!');
 
-        // 1. Seed Resume Link
-        const resumeUrl = "https://drive.google.com/file/d/13CZZdx_fuHoAYd8mAdk6JQH3ZkuD2fi4/view?usp=drive_link";
+        // 1. Seed Cloudinary Resume Link
+        const resumeUrl = "https://res.cloudinary.com/akphv6j6/image/upload/v1740000000/Sweta_Pandey_Resume.pdf";
         await resumeModel.deleteMany({});
-        await resumeModel.create({ resumeURL: resumeUrl });
-        console.log('✓ Resume URL seeded successfully');
+        await resumeModel.create({ resumeURL: resumeUrl, resumeUrl: resumeUrl });
+        console.log('✓ Cloudinary Resume URL seeded successfully');
 
         // 2. Seed Education Entries
         await ExperienceModel.deleteMany({});
@@ -89,8 +89,8 @@ const seedDatabase = async () => {
                 descriptions: "A full-stack portfolio built with Next.js, Node.js, Express, MongoDB, and animated with Three.js & GSAP. Features live email notification alerts and an OTP-protected admin control panel.",
                 techStack: ["Next.js", "React", "Node.js", "Express", "MongoDB", "Three.js"],
                 imageURL: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-                liveLINK: "https://sweta-portfolio.vercel.app",
-                gitHub: "https://github.com/sweta/portfolio",
+                liveLINK: "https://my-portfolio-jet-phi-22.vercel.app",
+                gitHub: "https://github.com/swetapandey-dev/myPortfolio",
                 featured: true
             },
             {
@@ -98,8 +98,8 @@ const seedDatabase = async () => {
                 descriptions: "Developed a Python-based automation tool that automatically categorizes files into structured folders based on file extensions using OS and Shutil modules to minimize manual file sorting.",
                 techStack: ["Python", "Automation", "OS Module", "Shutil"],
                 imageURL: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
-                liveLINK: "https://github.com",
-                gitHub: "https://github.com",
+                liveLINK: "https://github.com/swetapandey-dev",
+                gitHub: "https://github.com/swetapandey-dev",
                 featured: true
             },
             {
@@ -107,8 +107,8 @@ const seedDatabase = async () => {
                 descriptions: "Built a Python weather application retrieving real-time weather metrics for global cities via REST API integration, HTTP requests, and structured JSON parsing.",
                 techStack: ["Python", "REST API", "Requests", "JSON Parsing"],
                 imageURL: "https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&w=800&q=80",
-                liveLINK: "https://github.com",
-                gitHub: "https://github.com",
+                liveLINK: "https://github.com/swetapandey-dev",
+                gitHub: "https://github.com/swetapandey-dev",
                 featured: false
             },
             {
@@ -116,8 +116,8 @@ const seedDatabase = async () => {
                 descriptions: "Developed an automated web scraper tool using Requests and BeautifulSoup libraries to extract, clean, and format structured website content.",
                 techStack: ["Python", "BeautifulSoup", "Requests", "Data Processing"],
                 imageURL: "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?auto=format&fit=crop&w=800&q=80",
-                liveLINK: "https://github.com",
-                gitHub: "https://github.com",
+                liveLINK: "https://github.com/swetapandey-dev",
+                gitHub: "https://github.com/swetapandey-dev",
                 featured: false
             }
         ];
@@ -162,7 +162,7 @@ const seedDatabase = async () => {
         await BlogModel.insertMany(blogEntries);
         console.log('✓ Tech Blogs seeded successfully');
 
-        console.log('--- SEEDING FINISHED WITH PURE TECH STACK ---');
+        console.log('--- SEEDING FINISHED WITH CLOUDINARY RESUME ---');
         process.exit(0);
     } catch (err) {
         console.error('Error seeding MongoDB Atlas:', err);
