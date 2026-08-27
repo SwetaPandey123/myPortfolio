@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ThemeProvider } from "./context/ThemeContext";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Projects from "./pages/Projects";
+import ExperiencePage from "./pages/ExperiencePage";
+import Hobbies from "./pages/Hobbies";
+import Blog from "./pages/Blog";
+import Resume from "./pages/Resume";
+import Login from "./pages/Login";
+import OtpVerify from "./pages/OtpVerify";
+import AdminEdit from "./pages/AdminEdit";
+import NotFound from "./pages/NotFound";
+
+function MainLayout() {
+  const location = useLocation();
+  const hideHeaderFooter =
+    location.pathname === "/edit" ||
+    location.pathname === "/verify-otp" ||
+    location.pathname === "/admin";
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="flex flex-col min-h-screen">
+      {!hideHeaderFooter && <Navbar />}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/experience" element={<ExperiencePage />} />
+          <Route path="/hobbies" element={<Hobbies />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/resume" element={<Resume />} />
+
+          {/* Admin Routes */}
+          <Route path="/edit" element={<Login />} />
+          <Route path="/verify-otp" element={<OtpVerify />} />
+          <Route path="/admin" element={<AdminEdit />} />
+
+          {/* Fallback 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      {!hideHeaderFooter && <Footer />}
+    </div>
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <ThemeProvider>
+      <BrowserRouter>
+        <MainLayout />
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}

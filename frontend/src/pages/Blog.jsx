@@ -1,0 +1,140 @@
+import { useEffect, useRef, useState } from "react";
+import { Calendar, ArrowRight } from "lucide-react";
+
+function useSection() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.querySelectorAll(".fade-up").forEach((child, i) => {
+            setTimeout(() => child.classList.add("visible"), i * 100);
+          });
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
+const posts = [
+  {
+    id: 1,
+    title: "Getting Started with Python File Automation",
+    excerpt: "How I automated my messy downloads folder with 30 lines of Python — and what it taught me about os and shutil.",
+    date: "July 2025",
+    category: "Tech",
+    image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&h=340&fit=crop&auto=format",
+  },
+  {
+    id: 2,
+    title: "What Teaching Nursery Kids Taught Me About Code",
+    excerpt: "Patience, clarity, repetition. The best lessons in communication I've had came from a five-year-old asking 'why?'.",
+    date: "June 2025",
+    category: "Teaching",
+    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=340&fit=crop&auto=format",
+  },
+  {
+    id: 3,
+    title: "Understanding REST APIs Without the Jargon",
+    excerpt: "A beginner-friendly breakdown of how my Weather App talks to the internet — no CS degree required.",
+    date: "May 2025",
+    category: "Tech",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=340&fit=crop&auto=format",
+  },
+];
+
+const categories = ["All", "Tech", "Teaching", "Personal"];
+
+export default function Blog() {
+  const [active, setActive] = useState("All");
+  const gridRef = useSection();
+
+  const filtered = active === "All" ? posts : posts.filter((p) => p.category === active);
+
+  return (
+    <div className="min-h-screen pt-20">
+      {/* Header */}
+      <section className="py-16 bg-gradient-to-br from-indigo-50/50 to-transparent dark:from-slate-900 dark:to-slate-950">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <p className="text-teal-600 dark:text-teal-400 font-semibold text-sm tracking-widest uppercase mb-2">
+            Ideas & Reflections
+          </p>
+          <h1
+            className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white"
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
+            Thoughts & Learnings
+          </h1>
+        </div>
+      </section>
+
+      {/* Filter */}
+      <section className="py-6 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto px-6 flex flex-wrap gap-2 justify-center">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+                active === cat
+                  ? "bg-teal-600 text-white shadow-md"
+                  : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-slate-700"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Grid */}
+      <section ref={gridRef} className="py-16 bg-gray-50/50 dark:bg-slate-950">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
+            {filtered.map((post) => (
+              <article
+                key={post.id}
+                className="fade-up card-lift bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col"
+              >
+                <div className="relative h-44 bg-gray-100 dark:bg-slate-800 overflow-hidden">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                  <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full bg-teal-50 dark:bg-slate-900 text-teal-700 dark:text-teal-300 border border-teal-100 dark:border-slate-700">
+                    {post.category}
+                  </span>
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 mb-3">
+                    <Calendar size={12} />
+                    {post.date}
+                  </div>
+                  <h2
+                    className="font-bold text-gray-900 dark:text-white text-base mb-2 leading-snug"
+                    style={{ fontFamily: "Poppins, sans-serif" }}
+                  >
+                    {post.title}
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed flex-1 mb-5">
+                    {post.excerpt}
+                  </p>
+                  <button className="flex items-center gap-1.5 text-sm font-semibold text-teal-600 dark:text-teal-400 hover:underline">
+                    Read More <ArrowRight size={14} />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
