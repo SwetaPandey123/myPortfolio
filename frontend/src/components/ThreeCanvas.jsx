@@ -1,126 +1,143 @@
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
+'use client';
 
-export default function ThreeCanvas({ variant = "sphere" }) {
-  const mountRef = useRef(null);
+import { useEffect, useRef } from 'react';
+
+export default function ThreeCanvas() {
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    const container = mountRef.current;
-    if (!container) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      container.clientWidth / container.clientHeight,
-      0.1,
-      1000
-    );
-    camera.position.z = 4;
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-
-    let mesh;
-    let particlesMesh;
-
-    if (variant === "knot") {
-      const geometry = new THREE.TorusKnotGeometry(1.2, 0.35, 128, 32);
-      const material = new THREE.MeshStandardMaterial({
-        color: 0x0d9488,
-        wireframe: true,
-        roughness: 0.2,
-        metalness: 0.8,
-      });
-      mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-      scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0x14b8a6, 3, 100);
-      pointLight.position.set(5, 5, 5);
-      scene.add(pointLight);
-    } else {
-      const particlesCount = 1200;
-      const posArray = new Float32Array(particlesCount * 3);
-
-      for (let i = 0; i < particlesCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 8;
-      }
-
-      const particlesGeometry = new THREE.BufferGeometry();
-      particlesGeometry.setAttribute(
-        "position",
-        new THREE.BufferAttribute(posArray, 3)
-      );
-
-      const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.025,
-        color: 0x14b8a6,
-        transparent: true,
-        opacity: 0.7,
-        blending: THREE.AdditiveBlending,
-      });
-
-      particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-      scene.add(particlesMesh);
-    }
-
-    let mouseX = 0;
-    let mouseY = 0;
-
-    const handleMouseMove = (event) => {
-      mouseX = (event.clientX / window.innerWidth - 0.5) * 0.5;
-      mouseY = (event.clientY / window.innerHeight - 0.5) * 0.5;
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    const handleResize = () => {
-      if (!container) return;
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    };
-
-    window.addEventListener("resize", handleResize);
-
     let animationFrameId;
-    const clock = new THREE.Clock();
+    let scene, camera, renderer, particles, geometry, material;
 
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
+    const initThree = async () => {
+      try {
+        const THREE = await import('three');
+        if (!containerRef.current) return;
 
-      if (mesh) {
-        mesh.rotation.x = elapsedTime * 0.2;
-        mesh.rotation.y = elapsedTime * 0.3;
-        mesh.rotation.x += (mouseY - mesh.rotation.x) * 0.05;
-        mesh.rotation.y += (mouseX - mesh.rotation.y) * 0.05;
+        const width = containerRef.current.clientWidth;
+        const height = containerRef.current.clientHeight;
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+        camera.position.z = 30;
+
+        renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        containerRef.current.appendChild(renderer.domElement);
+
+        // Elegant particle torus knot / subtle floating mesh
+        const particleCount = 450;
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+
+        const color1 = new THREE.Color('#4F46E5');
+        const color2 = new THREE.Color('#0284C7');
+
+        for (let i = 0; i < particleCount; i++) {
+          const t = i * 0.1;
+          const x = (10 + Math.sin(t * 2)) * Math.cos(t) * 0.8;
+          const y = (10 + Math.sin(t * 2)) * Math.sin(t) * 0.8;
+          const z = Math.cos(t * 3) * 4;
+
+          positions[i * 3] = x + (Math.random() - 0.5) * 4;
+          positions[i * 3 + 1] = y + (Math.random() - 0.5) * 4;
+          positions[i * 3 + 2] = z + (Math.random() - 0.5) * 4;
+
+          const mixedColor = color1.clone().lerp(color2, Math.random());
+          colors[i * 3] = mixedColor.r;
+          colors[i * 3 + 1] = mixedColor.g;
+          colors[i * 3 + 2] = mixedColor.b;
+        }
+
+        geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        // Soft round particle texture
+        const canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+        const ctx = canvas.getContext('2d');
+        const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+        grad.addColorStop(0, 'rgba(79, 70, 229, 0.8)');
+        grad.addColorStop(1, 'rgba(79, 70, 229, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(8, 8, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        const texture = new THREE.CanvasTexture(canvas);
+
+        material = new THREE.PointsMaterial({
+          size: 0.5,
+          vertexColors: true,
+          map: texture,
+          transparent: true,
+          opacity: 0.35, // Low subtle opacity so text is 100% crisp and readable
+          blending: THREE.NormalBlending,
+        });
+
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        const handleMouseMove = (event) => {
+          mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+          mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+
+        const handleResize = () => {
+          if (!containerRef.current || !renderer || !camera) return;
+          const w = containerRef.current.clientWidth;
+          const h = containerRef.current.clientHeight;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        const animate = () => {
+          animationFrameId = requestAnimationFrame(animate);
+
+          if (particles) {
+            particles.rotation.y += 0.0015;
+            particles.rotation.x += 0.0008;
+
+            particles.rotation.y += mouseX * 0.002;
+            particles.rotation.x += mouseY * 0.002;
+          }
+
+          renderer.render(scene, camera);
+        };
+
+        animate();
+
+        return () => {
+          window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('resize', handleResize);
+          cancelAnimationFrame(animationFrameId);
+          if (containerRef.current && renderer.domElement) {
+            containerRef.current.removeChild(renderer.domElement);
+          }
+        };
+      } catch (e) {
+        console.warn('Three.js canvas initialization skipped:', e);
       }
-
-      if (particlesMesh) {
-        particlesMesh.rotation.y = elapsedTime * 0.05;
-        particlesMesh.rotation.x = elapsedTime * 0.03;
-        particlesMesh.rotation.x += (mouseY - particlesMesh.rotation.x) * 0.05;
-        particlesMesh.rotation.y += (mouseX - particlesMesh.rotation.y) * 0.05;
-      }
-
-      renderer.render(scene, camera);
     };
 
-    animate();
+    initThree();
+  }, []);
 
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
-      if (container && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
-      }
-    };
-  }, [variant]);
-
-  return <div ref={mountRef} className="absolute inset-0 pointer-events-none z-0" />;
+  return (
+    <div
+      ref={containerRef}
+      className="absolute right-0 top-0 w-full sm:w-1/2 h-full pointer-events-none z-0 opacity-40 overflow-hidden"
+    />
+  );
 }

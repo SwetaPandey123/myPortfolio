@@ -1,34 +1,34 @@
 const SkillsModel = require('../models/SkillModel')
 
-
-const GetAllSkill = async(req , res)=>{
+const GetAllSkill = async (req, res) => {
     try {
         const AllSkills = await SkillsModel.find();
         return res.status(200).json({
-            success : true,
-            message : "all skill fetched sucessfully ",
-            data : AllSkills
+            success: true,
+            message: "All skills fetched successfully",
+            data: AllSkills
         })
-        
+
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "internal server error",
+            message: "Internal server error",
             data: error.message
-        }) 
+        })
     }
 }
-const createSkill = async (req , res)=>{
-    try {
-        let {Name , proficiency ,category , icon} = req.body;
 
-        if (!Name || !proficiency || !category || !icon){
+const createSkill = async (req, res) => {
+    try {
+        let { Name, proficiency, category, icon } = req.body;
+
+        if (!Name || !proficiency || !category || !icon) {
             return res.status(400).json({
-                success : false ,
-                message : "invalid credential",
+                success: false,
+                message: "All fields (Name, proficiency, category, icon) are required",
             })
         }
-        const createSkill = await SkillsModel.create({
+        const createdSkill = await SkillsModel.create({
             Name,
             proficiency,
             category,
@@ -36,53 +36,68 @@ const createSkill = async (req , res)=>{
         })
 
         return res.status(201).json({
-            success : true,
-            message : "skill created sucessfully",
-            data : createSkill
+            success: true,
+            message: "Skill created successfully",
+            data: createdSkill
         })
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "internal server error",
+            message: "Internal server error",
             data: error.message
         })
     }
 }
-const updateskill = async( req , res)=>{
+
+const updateskill = async (req, res) => {
     try {
-        let {id} = req.params;
+        let { id } = req.params;
         let update = req.body;
 
-        const updatedskill = await SkillsModel.findByIdAndUpdate(id, update , {new : true})
+        const updatedskill = await SkillsModel.findByIdAndUpdate(id, update, { new: true });
+        if (!updatedskill) {
+            return res.status(404).json({
+                success: false,
+                message: "Skill not found"
+            });
+        }
         return res.status(200).json({
-            success : true,
-            message : "skill updated sucessfully",
-            data : updatedskill
+            success: true,
+            message: "Skill updated successfully",
+            data: updatedskill
         })
     } catch (error) {
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
-            message: "internal server error",
+            message: "Internal server error",
             data: error.message
         })
     }
 }
-const DeletSkill = async (req , res) =>{
+
+const DeletSkill = async (req, res) => {
     try {
-        let {id} = req.params;
+        let { id } = req.params;
         const deleteskills = await SkillsModel.findByIdAndDelete(id);
+        if (!deleteskills) {
+            return res.status(404).json({
+                success: false,
+                message: "Skill not found"
+            });
+        }
         return res.status(200).json({
-            success : true ,
-            message :"skill delete successfully",
-            data : deleteskills
+            success: true,
+            message: "Skill deleted successfully",
+            data: deleteskills
         })
-        
+
     } catch (error) {
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
-            message: "internal server error",
+            message: "Internal server error",
             data: error.message
         })
     }
 }
-module.exports = {GetAllSkill , createSkill  , updateskill , DeletSkill }
+
+module.exports = { GetAllSkill, createSkill, updateskill, DeletSkill }

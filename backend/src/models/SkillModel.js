@@ -3,27 +3,23 @@ const mongoose = require("mongoose");
 const SkillsSchema = new mongoose.Schema({
     Name: {
         type: String,
-        required: [true, "name is required "]
-
+        required: [true, "Name is required"]
     },
-   proficiency: {
-    type: String,
-    required: [true, "proficiency is required"]
-  },
-
-  category: {
-    type: String,
-    required: [true, "category is required"]
-  },
-
-  icon: {
-    type: String,
-    required: [true, "icon is required"]
-  }
+    proficiency: {
+        type: String,
+        default: "100%"
+    },
+    category: {
+        type: String,
+        required: [true, "Category is required"]
+    },
+    icon: {
+        type: String,
+        required: [true, "Icon is required"]
+    }
 }, {
     timestamps: true
-})
+});
 
-const SkillsModel = mongoose.model('Skills', SkillsSchema)
-
-module.exports = SkillsModel
+const SkillsModel = mongoose.model('Skills', SkillsSchema);
+module.exports = SkillsModel;

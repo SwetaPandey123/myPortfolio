@@ -1,158 +1,138 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, FileText, Sun, Moon, Monitor } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
+'use client';
 
-const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  { label: "Skills", to: "/#skills" },
-  { label: "Projects", to: "/projects" },
-  { label: "Experience", to: "/experience" },
-  { label: "Hobbies", to: "/hobbies" },
-  { label: "Blog", to: "/blog" },
-  { label: "Contact", to: "/#contact" },
-];
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
-export default function Navbar() {
-  const [open, setOpen] = useState(false);
+export default function Navbar({ resumeUrl }) {
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-  const { themeMode, activeTheme, toggleTheme } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => setOpen(false), [location]);
+  const navLinks = [
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Skills', href: '/#skills', sectionId: 'skills' },
+    { name: 'Projects', href: '/#projects', sectionId: 'projects' },
+    { name: 'Experience', href: '/#experience', sectionId: 'experience' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Resume', href: '/resume' },
+    { name: 'Contact', href: '/#contact', sectionId: 'contact' },
+  ];
 
-  const handleHashLink = (to) => {
-    if (to.startsWith("/#")) {
-      if (location.pathname !== "/") {
-        window.location.href = to;
-      } else {
-        const id = to.replace("/#", "");
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const handleNavClick = (e, link) => {
+    if (link.sectionId && pathname === '/') {
+      e.preventDefault();
+      const element = document.getElementById(link.sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setMobileMenuOpen(false);
       }
     }
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-20 flex items-center ${
-        scrolled
-          ? "bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl shadow-xs border-b border-gray-200/50 dark:border-slate-800/50"
-          : "bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-gray-100/30 dark:border-slate-800/30"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-6 w-full flex items-center justify-between">
-        <Link
-          to="/"
-          className="font-display font-bold text-xl tracking-tight text-teal-600 dark:text-teal-400 flex items-center gap-2"
-        >
-          <span className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse" />
-          Sweta Pandey
+    <header className="fixed top-0 left-0 w-full z-50 px-4 sm:px-8 py-4 transition-all duration-300">
+      <div
+        className={`max-w-7xl mx-auto rounded-2xl px-5 py-3 flex items-center justify-between transition-all duration-300 border ${
+          scrolled
+            ? 'bg-white/95 backdrop-blur-xl border-slate-200/90 shadow-lg shadow-slate-900/5'
+            : 'bg-white/90 backdrop-blur-md border-slate-200/80 shadow-sm'
+        }`}
+      >
+        {/* Brand Logo */}
+        <Link href="/" className="flex items-center space-x-3 group">
+          <div className="w-10 h-10 rounded-xl btn-gradient flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+            SP
+          </div>
+          <div>
+            <span className="font-extrabold text-base tracking-tight text-slate-900 block leading-tight">
+              Sweta Pandey
+            </span>
+            <span className="text-[11px] text-indigo-600 font-bold tracking-wider uppercase block">
+              Full Stack Web Developer
+            </span>
+          </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map(({ label, to }) =>
-            to.startsWith("/#") ? (
-              <button
-                key={label}
-                onClick={() => handleHashLink(to)}
-                className="text-xs font-semibold text-gray-600 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
-              >
-                {label}
-              </button>
-            ) : (
-              <Link
-                key={label}
-                to={to}
-                className={`text-xs font-semibold transition-colors ${
-                  location.pathname === to
-                    ? "text-teal-600 dark:text-teal-400 font-bold border-b-2 border-teal-500 pb-0.5"
-                    : "text-gray-600 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400"
-                }`}
-              >
-                {label}
-              </Link>
-            )
-          )}
-
-          {/* Theme Preference Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 dark:border-slate-700 bg-gray-100/60 dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 hover:bg-teal-50 dark:hover:bg-slate-700 transition-all text-xs font-semibold"
-            aria-label="Toggle Theme"
-            title={`Mode: ${themeMode.toUpperCase()} (Click to change)`}
-          >
-            {themeMode === "light" && <Sun size={14} className="text-amber-500" />}
-            {themeMode === "dark" && <Moon size={14} className="text-teal-400" />}
-            {themeMode === "system" && <Monitor size={14} className="text-indigo-400" />}
-            <span className="capitalize text-[11px]">{themeMode}</span>
-          </button>
-
-          {/* Resume Button */}
-          <Link
-            to="/resume"
-            className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 dark:bg-teal-500 text-white text-xs font-bold rounded-xl hover:bg-teal-700 dark:hover:bg-teal-600 transition-all shadow-xs"
-          >
-            <FileText size={14} />
-            Resume
-          </Link>
+        {/* Desktop Links */}
+        <nav className="hidden lg:flex items-center space-x-1">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link)}
+              className={`px-3.5 py-2 text-xs lg:text-sm font-bold rounded-xl transition-all ${
+                pathname === link.href
+                  ? 'text-indigo-600 bg-indigo-50/80 font-extrabold'
+                  : 'text-slate-700 hover:text-indigo-600 hover:bg-slate-100/80'
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
         </nav>
 
-        {/* Mobile controls */}
-        <div className="flex items-center gap-3 md:hidden">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-200 text-xs flex items-center gap-1"
+        {/* Action Buttons */}
+        <div className="hidden lg:flex items-center space-x-3">
+          <Link
+            href="/resume"
+            className="inline-flex items-center space-x-1.5 px-4 py-2 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl transition-all shadow-2xs"
           >
-            {activeTheme === "light" ? <Sun size={16} className="text-amber-500" /> : <Moon size={16} className="text-teal-400" />}
-          </button>
-          <button
-            className="text-gray-700 dark:text-gray-200"
-            onClick={() => setOpen(!open)}
-            aria-label="Toggle Menu"
+            <i className="ri-file-download-line text-sm"></i>
+            <span>Resume</span>
+          </Link>
+
+          <Link
+            href="/admin"
+            className="inline-flex items-center justify-center w-9 h-9 text-slate-600 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition-colors"
+            title="Admin Dashboard"
           >
-            {open ? <X size={24} /> : <Menu size={24} />}
+            <i className="ri-user-settings-line text-lg"></i>
+          </Link>
+        </div>
+
+        {/* Mobile Toggle */}
+        <div className="lg:hidden flex items-center space-x-2">
+          <Link
+            href="/admin"
+            className="p-2 text-slate-600 hover:text-indigo-600 rounded-lg"
+            title="Admin Portal"
+          >
+            <i className="ri-user-settings-line text-xl"></i>
+          </Link>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 text-slate-700 hover:bg-slate-100 rounded-xl focus:outline-none"
+            aria-label="Toggle menu"
+          >
+            <i className={mobileMenuOpen ? 'ri-close-line text-2xl' : 'ri-menu-3-line text-2xl'}></i>
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
-      {open && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-b border-gray-200 dark:border-slate-800 shadow-xl px-6 py-6">
-          <nav className="flex flex-col gap-3">
-            {navLinks.map(({ label, to }) =>
-              to.startsWith("/#") ? (
-                <button
-                  key={label}
-                  onClick={() => handleHashLink(to)}
-                  className="text-left text-sm font-semibold text-gray-700 dark:text-gray-300 py-1"
-                >
-                  {label}
-                </button>
-              ) : (
-                <Link
-                  key={label}
-                  to={to}
-                  className="text-sm font-semibold text-gray-700 dark:text-gray-300 py-1"
-                >
-                  {label}
-                </Link>
-              )
-            )}
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden mt-2 max-w-7xl mx-auto bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-xl">
+          {navLinks.map((link) => (
             <Link
-              to="/resume"
-              className="mt-2 flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-600 text-white font-bold rounded-xl text-xs"
+              key={link.name}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link)}
+              className="block px-4 py-2.5 text-sm font-bold text-slate-800 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors"
             >
-              <FileText size={16} /> Resume
+              {link.name}
             </Link>
-          </nav>
+          ))}
         </div>
       )}
     </header>

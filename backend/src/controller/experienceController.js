@@ -1,99 +1,109 @@
 const ExperienceModel = require('../models/ExperienceModel')
 
-
-
-const GetExperience = async(req , res)=>{
+const GetExperience = async (req, res) => {
     try {
-        const GetAllExperience = await ExperienceModel.find();
+        const GetAllExperience = await ExperienceModel.find().sort({ createdAt: -1 });
         res.status(200).json({
-            success : true ,
-            message : "All Experience data fetched successfully" ,
-            data : GetAllExperience
+            success: true,
+            message: "All Experience data fetched successfully",
+            data: GetAllExperience
         })
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "internal server error",
+            message: "Internal server error",
             data: error.message
         })
     }
 }
-const createExprience = async(req , res)=>{
-    try {
-        let { title , organization , description , startDate , endDate , current , type , location} = req.body;
 
-        if(!title){
+const createExprience = async (req, res) => {
+    try {
+        let { title, organization, description, startDate, endDate, current, type, location } = req.body;
+
+        if (!title) {
             return res.status(400).json({
-                success : false,
-                message : "bad request , enter credentials "
+                success: false,
+                message: "Title is required"
             })
         }
         const CreateExperience = await ExperienceModel.create({
-                title,
-                organization,
-                description,
-                startDate,
-                endDate,
-                current,
-                type,
-                location
-            })
-            return res.status(201).json({
-                success : true,
-                message : "Experience created successfully",
-                data : CreateExperience
-            })
+            title,
+            organization,
+            description,
+            startDate,
+            endDate,
+            current,
+            type,
+            location
+        })
+        return res.status(201).json({
+            success: true,
+            message: "Experience created successfully",
+            data: CreateExperience
+        })
 
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "internal server error",
+            message: "Internal server error",
             data: error.message
         })
     }
 }
 
-const UpdateExperience = async (req , res)=>{
+const UpdateExperience = async (req, res) => {
     try {
-        let {id} = req.params;
-        let updatedExperience = req.body;
+        let { id } = req.params;
+        let updatedData = req.body;
 
-        const UpdateExperience =  await  ExperienceModel.findByIdAndUpdate(id , updatedExperience , {new : true})
+        const updatedExperience = await ExperienceModel.findByIdAndUpdate(id, updatedData, { new: true });
+
+        if (!updatedExperience) {
+            return res.status(404).json({
+                success: false,
+                message: "Experience record not found"
+            });
+        }
 
         return res.status(200).json({
-            success : true,
-            message : "Experience is updated successfully ",
-            data : updatedExperience
+            success: true,
+            message: "Experience updated successfully",
+            data: updatedExperience
         })
 
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: "internal server error",
+            message: "Internal server error",
             data: error.message
-        }) 
-    }
-}
-const DeleteExperience = async (req , res)=>{
-    try{
-        let {id} = req.params;
-
-        const DeleteExperience = await ExperienceModel.findByIdAndDelete(id)
-        return res.status(200).json({
-            success : true,
-            message : "experience Delete sucessfully",
-            data : DeleteExperience
         })
-    }catch(error){
-      res.status(500).json({
-            success: false,
-            message: "internal server error",
-            data: error.message
-        })   
     }
 }
 
+const DeleteExperience = async (req, res) => {
+    try {
+        let { id } = req.params;
 
+        const deletedExperience = await ExperienceModel.findByIdAndDelete(id);
+        if (!deletedExperience) {
+            return res.status(404).json({
+                success: false,
+                message: "Experience record not found"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Experience deleted successfully",
+            data: deletedExperience
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            data: error.message
+        })
+    }
+}
 
-
-module.exports = {GetExperience , createExprience , UpdateExperience , DeleteExperience}
+module.exports = { GetExperience, createExprience, UpdateExperience, DeleteExperience }
