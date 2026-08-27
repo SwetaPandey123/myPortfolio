@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://myportfolio-owi
 
 const API = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 5000,
+    timeout: 2000, // Fast 2-second timeout to prevent Render cold-start blocking
     headers: {
         'Content-Type': 'application/json',
     },
@@ -22,7 +22,16 @@ API.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
-// Public API endpoints with safe fallbacks
+// Silent background warmup ping for Render free-tier
+export const pingBackendWarmup = async () => {
+    try {
+        await axios.get(`${API_BASE_URL}/health`, { timeout: 1500 });
+    } catch (e) {
+        // silent ignore
+    }
+};
+
+// Public API endpoints with fast fallback data
 export const fetchProjects = async () => {
     try {
         const response = await API.get('/api/project');
@@ -84,98 +93,98 @@ export const fetchBlogById = async (id) => {
 };
 
 export const sendMessage = async (data) => {
-    const response = await API.post('/api/message/send', data);
+    const response = await API.post('/api/message/send', data, { timeout: 8000 });
     return response.data;
 };
 
 // Admin API endpoints
 export const loginAdmin = async (email, password) => {
-    const response = await API.post('/api/auth/login', { email, password });
+    const response = await API.post('/api/auth/login', { email, password }, { timeout: 8000 });
     return response.data;
 };
 
 export const verifyAdminOtp = async (otp) => {
-    const response = await API.post('/api/auth/verifyOtp', { otp });
+    const response = await API.post('/api/auth/verifyOtp', { otp }, { timeout: 8000 });
     return response.data;
 };
 
 export const resendAdminOtp = async () => {
-    const response = await API.post('/api/auth/resend-otp');
+    const response = await API.post('/api/auth/resend-otp', {}, { timeout: 8000 });
     return response.data;
 };
 
 export const createProject = async (data) => {
-    const response = await API.post('/api/project/create', data);
+    const response = await API.post('/api/project/create', data, { timeout: 8000 });
     return response.data;
 };
 
 export const updateProject = async (id, data) => {
-    const response = await API.put(`/api/project/update/${id}`, data);
+    const response = await API.put(`/api/project/update/${id}`, data, { timeout: 8000 });
     return response.data;
 };
 
 export const deleteProject = async (id) => {
-    const response = await API.delete(`/api/project/delete/${id}`);
+    const response = await API.delete(`/api/project/delete/${id}`, { timeout: 8000 });
     return response.data;
 };
 
 export const createSkill = async (data) => {
-    const response = await API.post('/api/skills/create', data);
+    const response = await API.post('/api/skills/create', data, { timeout: 8000 });
     return response.data;
 };
 
 export const updateSkill = async (id, data) => {
-    const response = await API.put(`/api/skills/update/${id}`, data);
+    const response = await API.put(`/api/skills/update/${id}`, data, { timeout: 8000 });
     return response.data;
 };
 
 export const deleteSkill = async (id) => {
-    const response = await API.delete(`/api/skills/delete/${id}`);
+    const response = await API.delete(`/api/skills/delete/${id}`, { timeout: 8000 });
     return response.data;
 };
 
 export const createExperience = async (data) => {
-    const response = await API.post('/api/experience/create', data);
+    const response = await API.post('/api/experience/create', data, { timeout: 8000 });
     return response.data;
 };
 
 export const updateExperience = async (id, data) => {
-    const response = await API.put(`/api/experience/update/${id}`, data);
+    const response = await API.put(`/api/experience/update/${id}`, data, { timeout: 8000 });
     return response.data;
 };
 
 export const deleteExperience = async (id) => {
-    const response = await API.delete(`/api/experience/delete/${id}`);
+    const response = await API.delete(`/api/experience/delete/${id}`, { timeout: 8000 });
     return response.data;
 };
 
 export const createBlog = async (data) => {
-    const response = await API.post('/api/blog/create', data);
+    const response = await API.post('/api/blog/create', data, { timeout: 8000 });
     return response.data;
 };
 
 export const updateBlog = async (id, data) => {
-    const response = await API.put(`/api/blog/update/${id}`, data);
+    const response = await API.put(`/api/blog/update/${id}`, data, { timeout: 8000 });
     return response.data;
 };
 
 export const deleteBlog = async (id) => {
-    const response = await API.delete(`/api/blog/delete/${id}`);
+    const response = await API.delete(`/api/blog/delete/${id}`, { timeout: 8000 });
     return response.data;
 };
 
 export const updateResume = async (url) => {
-    const response = await API.put('/api/resume/update', { url });
+    const response = await API.put('/api/resume/update', { url }, { timeout: 8000 });
     return response.data;
 };
 
 export const fetchMessages = async () => {
-    const response = await API.get('/api/message');
+    const response = await API.get('/api/message', { timeout: 8000 });
     return response.data;
 };
 
 export const deleteMessage = async (id) => {
-    const response = await API.delete(`/api/message/${id}`);
+    const response = await API.delete(`/api/message/${id}`, { timeout: 8000 });
     return response.data;
 };
 
