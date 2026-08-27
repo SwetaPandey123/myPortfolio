@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 const SmoothScroll = dynamic(() => import('@/components/SmoothScroll'), { ssr: false });
 
 export const metadata = {
-  metadataBase: new URL('https://sweta-portfolio.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://my-portfolio-jet-phi-22.vercel.app'),
   title: {
     default: 'Sweta Pandey | Full Stack Web Developer & Software Engineer',
     template: '%s | Sweta Pandey Portfolio'
@@ -23,7 +23,7 @@ export const metadata = {
     'Software Engineer Portfolio',
     'Web Developer West Bengal'
   ],
-  authors: [{ name: 'Sweta Pandey', url: 'https://sweta-portfolio.vercel.app' }],
+  authors: [{ name: 'Sweta Pandey', url: 'https://my-portfolio-jet-phi-22.vercel.app' }],
   creator: 'Sweta Pandey',
   publisher: 'Sweta Pandey',
   robots: {
@@ -38,18 +38,18 @@ export const metadata = {
     },
   },
   alternates: {
-    canonical: 'https://sweta-portfolio.vercel.app',
+    canonical: '/',
   },
   openGraph: {
     title: 'Sweta Pandey | Full Stack Web Developer',
-    description: 'Explore full-stack web applications, Python tools, tech articles, and contact Sweta Pandey for software engineering roles.',
-    url: 'https://sweta-portfolio.vercel.app',
+    description: 'Full Stack Web Developer & B.Tech CSE Student at LNCT Bhopal. Explore projects, technical blogs, resume, and contact information.',
+    url: 'https://my-portfolio-jet-phi-22.vercel.app',
     siteName: 'Sweta Pandey Portfolio',
     locale: 'en_US',
     type: 'website',
     images: [
       {
-        url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&h=630&q=80',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Sweta Pandey Full Stack Developer Portfolio',
@@ -61,7 +61,7 @@ export const metadata = {
     title: 'Sweta Pandey | Full Stack Web Developer',
     description: 'Full Stack Web Developer & B.Tech Computer Science student at LNCT Bhopal.',
     creator: '@SwetaPandey612',
-    images: ['https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&h=630&q=80'],
+    images: ['/og-image.jpg'],
   },
 };
 
@@ -70,8 +70,8 @@ export default function RootLayout({ children }) {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Sweta Pandey',
-    url: 'https://sweta-portfolio.vercel.app',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+    url: 'https://my-portfolio-jet-phi-22.vercel.app',
+    image: 'https://my-portfolio-jet-phi-22.vercel.app/og-image.jpg',
     sameAs: [
       'https://www.linkedin.com/in/sweta-pandey-dev/',
       'https://www.instagram.com/_sweta__pandey',
