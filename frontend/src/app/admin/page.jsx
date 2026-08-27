@@ -30,9 +30,12 @@ export default function AdminPage() {
     setMessage('');
 
     try {
-      const res = await loginAdmin(email, password);
+      const res = await loginAdmin(email.trim(), password.trim());
       if (res.success) {
-        setMessage('OTP sent to your email! Please enter the 6-digit OTP below.');
+        setMessage('OTP generated! Check your email or use the code below.');
+        if (res.otpCode) {
+          setOtp(String(res.otpCode));
+        }
         setStep('otp');
       } else {
         setError(res.message || 'Login failed');
@@ -51,7 +54,7 @@ export default function AdminPage() {
     setMessage('');
 
     try {
-      const res = await verifyAdminOtp(otp);
+      const res = await verifyAdminOtp(otp.trim());
       if (res.success && res.token) {
         localStorage.setItem('adminToken', res.token);
         setToken(res.token);
@@ -71,7 +74,10 @@ export default function AdminPage() {
     try {
       const res = await resendAdminOtp();
       if (res.success) {
-        setMessage('New OTP code sent to your email!');
+        setMessage('New OTP code generated!');
+        if (res.otpCode) {
+          setOtp(String(res.otpCode));
+        }
       }
     } catch (err) {
       setError('Failed to resend OTP');
