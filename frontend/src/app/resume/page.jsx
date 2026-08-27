@@ -24,7 +24,7 @@ export default async function ResumePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0f0f11] pt-24 pb-16">
+    <main className="min-h-screen bg-slate-50 pt-20">
       <Navbar resumeUrl={resumeUrl} />
       <ResumeViewer resumeUrl={resumeUrl} />
       <Footer />
