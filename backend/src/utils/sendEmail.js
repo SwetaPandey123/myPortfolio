@@ -1,33 +1,24 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (to, subject, text, html) => {
     try {
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // TLS
-            requireTLS: true,
-            family: 4, // Force IPv4 - Render free tier blocks IPv6 SMTP
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            },
-            tls: {
-                rejectUnauthorized: false
-            }
+        const { data, error } = await resend.emails.send({
+            from: 'onboarding@resend.dev',  // free tier sender
+            to: [to],
+            subject: subject,
+            html: html || `<p>${text}</p>`,
         });
 
-        await transporter.sendMail({
-            from: `"Sweta Pandey Portfolio" <${process.env.EMAIL_USER}>`,
-            to,
-            subject,
-            text,
-            html
-        });
+        if (error) {
+            console.error(`❌ Resend Email Error:`, error);
+            throw new Error(error.message);
+        }
 
-        console.log(`📧 Email sent successfully to ${to}`);
+        console.log(`✅ Resend Email sent to ${to} | ID: ${data?.id}`);
     } catch (err) {
-        console.error(`⚠️ Email send failed: ${err.message}`);
+        console.error(`⚠️ sendEmail failed: ${err.message}`);
         throw err;
     }
 };
