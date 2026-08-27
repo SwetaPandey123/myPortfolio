@@ -87,10 +87,8 @@ export default function HeroSection({ resumeUrl }) {
               <i className="ri-map-pin-line text-indigo-600 text-sm"></i>
               <span>Bhopal, MP, India</span>
             </span>
-            <a href="tel:+919832165044" className="flex items-center space-x-1.5 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs hover:text-indigo-600 transition-colors">
-              <i className="ri-phone-line text-indigo-600 text-sm"></i>
-              <span>+91-9832165044</span>
-            </a>
+
+
             <a href="mailto:pandeysweta612@gmail.com" className="flex items-center space-x-1.5 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs hover:text-indigo-600 transition-colors">
               <i className="ri-mail-line text-indigo-600 text-sm"></i>
               <span>pandeysweta612@gmail.com</span>

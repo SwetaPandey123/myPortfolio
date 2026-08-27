@@ -97,21 +97,8 @@ export default function ContactSection() {
               </div>
             </div>
 
-            <div className="glass-card p-6 rounded-3xl space-y-3 border border-slate-200/80 bg-white">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-2xl">
-                <i className="ri-phone-line"></i>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">Phone Number</h3>
-                <p className="text-slate-500 text-xs">Direct Call / WhatsApp</p>
-                <a
-                  href="tel:+919832165044"
-                  className="text-slate-900 font-bold text-base hover:text-indigo-600 mt-1 block"
-                >
-                  +91-9832165044
-                </a>
-              </div>
-            </div>
+
+
 
             <div className="glass-card p-6 rounded-3xl space-y-3 border border-slate-200/80 bg-white">
               <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 text-2xl">

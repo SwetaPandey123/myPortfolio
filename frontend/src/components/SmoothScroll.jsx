@@ -7,21 +7,15 @@ export default function SmoothScroll({ children }) {
   const pathname = usePathname();
   const lenisRef = useRef(null);
 
-  // 1. Reset scroll position immediately on route change to prevent blank screen
+  // Reset to top on route change
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      if (lenisRef.current) {
-        try {
-          lenisRef.current.scrollTo(0, { immediate: true });
-        } catch (e) {
-          // ignore if lenis is unmounting
-        }
-      }
+      lenisRef.current?.scrollTo(0, { immediate: true });
     }
   }, [pathname]);
 
-  // 2. Initialize Lenis with proper requestAnimationFrame cleanup
+  // Init Lenis with consistent uniform speed
   useEffect(() => {
     let lenis;
     let animFrameId;
@@ -31,37 +25,34 @@ export default function SmoothScroll({ children }) {
         const Lenis = (await import('@studio-freight/lenis')).default;
 
         lenis = new Lenis({
-          duration: 1.0,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          smoothTouch: false,
-          touchMultiplier: 1.5,
+          duration: 1.2,          // consistent duration everywhere
+          easing: (t) => t < 0.5  // smooth ease-in-out, no fast/slow variance
+            ? 4 * t * t * t
+            : 1 - Math.pow(-2 * t + 2, 3) / 2,
+          smoothTouch: false,     // native touch scroll (no lag on mobile)
+          touchMultiplier: 1,
+          wheelMultiplier: 1,     // uniform wheel speed
+          infinite: false,
         });
 
         lenisRef.current = lenis;
 
-        function raf(time) {
-          if (lenis) {
-            lenis.raf(time);
-            animFrameId = requestAnimationFrame(raf);
-          }
-        }
-
+        const raf = (time) => {
+          lenis?.raf(time);
+          animFrameId = requestAnimationFrame(raf);
+        };
         animFrameId = requestAnimationFrame(raf);
       } catch (err) {
-        console.warn('Lenis smooth scroll fallback:', err);
+        console.warn('Lenis init failed, using native scroll:', err);
       }
     };
 
     initLenis();
 
     return () => {
-      if (animFrameId) {
-        cancelAnimationFrame(animFrameId);
-      }
-      if (lenis) {
-        lenis.destroy();
-        lenisRef.current = null;
-      }
+      cancelAnimationFrame(animFrameId);
+      lenis?.destroy();
+      lenisRef.current = null;
     };
   }, []);
 

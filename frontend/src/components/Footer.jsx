@@ -92,10 +92,7 @@ export default function Footer() {
           <div className="md:col-span-4 space-y-3">
             <h4 className="text-white font-bold text-base">Direct Contact</h4>
             <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2 text-xs">
-              <div className="text-slate-300 font-semibold flex items-center space-x-1.5">
-                <i className="ri-phone-line text-indigo-400"></i>
-                <span>+91-9832165044</span>
-              </div>
+
               <div className="text-slate-300 font-semibold flex items-center space-x-1.5">
                 <i className="ri-mail-line text-indigo-400"></i>
                 <span>pandeysweta612@gmail.com</span>
