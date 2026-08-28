@@ -3,15 +3,19 @@
 import { useState } from 'react';
 
 export default function ResumeViewer({ resumeUrl }) {
+  const [viewMode, setViewMode] = useState('image'); // 'image' | 'google' | 'pdf'
   const [iframeLoaded, setIframeLoaded] = useState(false);
-  const [useGoogleViewer, setUseGoogleViewer] = useState(true);
 
-  const directUrl = resumeUrl || '';
+  // If Cloudinary URL ends with .pdf or contains /upload/, generate HD .jpg image preview URL
+  const jpgPreviewUrl = resumeUrl
+    ? (resumeUrl.includes('/image/upload/')
+        ? resumeUrl.replace(/\.pdf$/i, '.jpg')
+        : (resumeUrl.includes('/upload/') ? resumeUrl.replace('/upload/', '/upload/f_jpg,q_auto/') : ''))
+    : '';
+
   const googleUrl = resumeUrl
     ? `https://docs.google.com/viewer?url=${encodeURIComponent(resumeUrl)}&embedded=true`
     : '';
-
-  const embedUrl = useGoogleViewer ? (googleUrl || directUrl) : (directUrl || googleUrl);
 
   const downloadUrl = resumeUrl
     ? (resumeUrl.includes('/raw/upload/')
@@ -39,43 +43,57 @@ export default function ResumeViewer({ resumeUrl }) {
             </span>
           </h1>
 
-          {/* Subtitle — updated with July 2026 passout */}
           <p className="text-slate-500 text-sm sm:text-base max-w-lg mx-auto">
             B.Tech CSE — LNCT Bhopal&nbsp;·&nbsp;Passout July 2026&nbsp;·&nbsp;Full Stack Web Developer
           </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          {/* View Mode Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            {jpgPreviewUrl && (
+              <button
+                onClick={() => setViewMode('image')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  viewMode === 'image'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <i className="ri-image-line text-sm"></i>
+                <span>HD Visual View</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => { setViewMode('google'); setIframeLoaded(false); }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'google'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <i className="ri-file-search-line text-sm"></i>
+              <span>Google Docs Viewer</span>
+            </button>
+
             {downloadUrl && (
               <a
                 href={downloadUrl}
                 download="Sweta_Pandey_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-200 transition-all hover:-translate-y-0.5"
               >
-                <i className="ri-download-2-line text-base"></i>
-                Download PDF
-              </a>
-            )}
-            {resumeUrl && (
-              <a
-                href={resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-bold shadow-sm transition-all hover:-translate-y-0.5"
-              >
-                <i className="ri-external-link-line text-base"></i>
-                Open Full Screen
+                <i className="ri-download-2-line text-sm"></i>
+                <span>Download PDF</span>
               </a>
             )}
           </div>
         </div>
       </div>
 
-      {/* PDF Viewer */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-lg">
+      {/* PDF / Image Viewer Area */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-xl">
 
           {/* Browser-style top bar */}
           <div className="flex items-center justify-between px-5 py-3 bg-slate-100 border-b border-slate-200">
@@ -85,8 +103,8 @@ export default function ResumeViewer({ resumeUrl }) {
               <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
             </div>
             <div className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-500 text-xs font-medium shadow-sm max-w-xs truncate">
-              <i className="ri-cloud-line text-indigo-500 shrink-0"></i>
-              <span className="truncate">res.cloudinary.com · Sweta_Pandey_Resume.pdf</span>
+              <i className="ri-shield-check-line text-emerald-500 shrink-0"></i>
+              <span className="truncate">Sweta_Pandey_Resume.pdf</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -94,76 +112,50 @@ export default function ResumeViewer({ resumeUrl }) {
             </div>
           </div>
 
-          {/* Iframe area */}
-          <div className="relative w-full bg-slate-50" style={{ height: '80vh', minHeight: '600px' }}>
-
-            {/* Loading spinner */}
-            {!iframeLoaded && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-slate-50 z-10">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center">
-                  <i className="ri-file-pdf-2-line text-2xl text-indigo-500"></i>
-                </div>
-                <div className="text-center space-y-1">
-                  <p className="text-slate-800 font-bold text-sm">Loading Resume...</p>
-                  <p className="text-slate-400 text-xs">Fetching from Cloudinary</p>
-                </div>
-                <div className="flex gap-1">
-                  {[0, 1, 2].map(i => (
-                    <span
-                      key={i}
-                      className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce"
-                      style={{ animationDelay: `${i * 0.15}s` }}
-                    ></span>
-                  ))}
-                </div>
+          {/* Content display */}
+          <div className="relative w-full bg-slate-100 flex items-center justify-center p-4 sm:p-6 min-h-[600px]">
+            {viewMode === 'image' && jpgPreviewUrl ? (
+              <div className="w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden border border-slate-200 bg-white">
+                <img
+                  src={jpgPreviewUrl}
+                  alt="Sweta Pandey Resume"
+                  className="w-full h-auto object-contain block"
+                />
               </div>
-            )}
-
-            {embedUrl ? (
-              <iframe
-                key={embedUrl}
-                src={embedUrl}
-                className="w-full h-full border-0"
-                title="Sweta Pandey Resume"
-                onLoad={() => setIframeLoaded(true)}
-                allow="fullscreen"
-              />
+            ) : viewMode === 'google' && googleUrl ? (
+              <div className="relative w-full h-[800px]">
+                {!iframeLoaded && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white z-10">
+                    <i className="ri-loader-4-line text-3xl text-indigo-600 animate-spin"></i>
+                    <p className="text-xs font-bold text-slate-600">Loading Google Viewer...</p>
+                  </div>
+                )}
+                <iframe
+                  src={googleUrl}
+                  className="w-full h-full border-0 rounded-xl shadow-inner"
+                  title="Sweta Pandey Resume Google Viewer"
+                  onLoad={() => setIframeLoaded(true)}
+                />
+              </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full gap-5 text-center px-6">
-                <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center">
-                  <i className="ri-file-pdf-2-line text-3xl text-indigo-500"></i>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-slate-800 font-bold text-lg">Resume loading...</p>
-                  <p className="text-slate-500 text-sm max-w-sm">
-                    Backend is warming up. Please wait a moment and refresh.
-                  </p>
-                </div>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-all"
-                >
-                  Refresh Page
-                </button>
+              <div className="text-center space-y-4 py-16">
+                <i className="ri-file-pdf-2-line text-5xl text-indigo-500"></i>
+                <p className="text-slate-700 font-bold">Resume PDF Ready</p>
+                {downloadUrl && (
+                  <a
+                    href={downloadUrl}
+                    download="Sweta_Pandey_Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold text-sm shadow-lg shadow-indigo-200"
+                  >
+                    <i className="ri-download-line text-lg"></i>
+                    Download Resume PDF
+                  </a>
+                )}
               </div>
             )}
           </div>
-        </div>
-
-        {/* Switch viewer + hint */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
-          <p className="text-slate-400 text-xs font-medium">
-            Resume hosted securely on Cloudinary · Fetched via backend API
-          </p>
-          {resumeUrl && (
-            <button
-              onClick={() => { setUseGoogleViewer(v => !v); setIframeLoaded(false); }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 text-xs font-semibold shadow-sm transition-all hover:border-indigo-200"
-            >
-              <i className="ri-refresh-line"></i>
-              {useGoogleViewer ? 'Switch to Direct View' : 'Switch to Google Viewer'}
-            </button>
-          )}
         </div>
       </div>
     </div>

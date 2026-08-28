@@ -25,9 +25,8 @@ const resumeStorage = new CloudinaryStorage({
     cloudinary,
     params: {
         folder:         'portfolio',
-        allowed_formats: ['pdf'],
-        resource_type:  'auto',
-        public_id:      () => 'Sweta_Pandey_Resume',
+        resource_type:  'raw',
+        public_id:      () => 'Sweta_Pandey_Resume.pdf',
         overwrite:      true,
     },
 });
