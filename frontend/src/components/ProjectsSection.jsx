@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 export default function ProjectsSection({ projects = [] }) {
   const [filter, setFilter] = useState('All');
+  const [showAll, setShowAll] = useState(false);
 
   // Merged projects list from both Developer & Academic resumes
   const defaultProjects = [
@@ -65,6 +66,8 @@ export default function ProjectsSection({ projects = [] }) {
       ? projectList.filter((p) => p.featured)
       : sortedList;
 
+  const displayedProjects = showAll ? filteredProjects : filteredProjects.slice(0, 3);
+
   return (
     <section id="projects" className="py-24 relative bg-slate-50/60 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -88,7 +91,7 @@ export default function ProjectsSection({ projects = [] }) {
             {filterOptions.map((opt) => (
               <button
                 key={opt}
-                onClick={() => setFilter(opt)}
+                onClick={() => { setFilter(opt); setShowAll(false); }}
                 className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
                   filter === opt
                     ? 'gradient-bg text-white shadow-sm'
@@ -101,9 +104,9 @@ export default function ProjectsSection({ projects = [] }) {
           </div>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredProjects.map((project) => (
+        {/* Projects Grid — 3 Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayedProjects.map((project) => (
             <div
               key={project._id}
               className="glass-card glass-card-hover rounded-3xl overflow-hidden border border-slate-200/80 bg-white flex flex-col group"
@@ -193,6 +196,19 @@ export default function ProjectsSection({ projects = [] }) {
             </div>
           ))}
         </div>
+
+        {/* See More / Show Less Button */}
+        {filteredProjects.length > 3 && (
+          <div className="mt-12 text-center">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="inline-flex items-center space-x-2 px-8 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-sm border border-slate-200 shadow-md transition-all hover:scale-105"
+            >
+              <span>{showAll ? 'Show Less Projects' : `See More Projects (${filteredProjects.length - 3} more)`}</span>
+              <i className={showAll ? 'ri-arrow-up-s-line text-lg' : 'ri-arrow-down-s-line text-lg'}></i>
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
