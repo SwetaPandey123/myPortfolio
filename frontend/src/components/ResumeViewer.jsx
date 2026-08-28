@@ -5,6 +5,7 @@ import { useState } from 'react';
 export default function ResumeViewer({ resumeUrl }) {
   const [viewMode, setViewMode] = useState('image'); // 'image' | 'google' | 'pdf'
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   // If Cloudinary URL ends with .pdf or contains /upload/, generate HD .jpg image preview URL
   const jpgPreviewUrl = resumeUrl
@@ -17,11 +18,27 @@ export default function ResumeViewer({ resumeUrl }) {
     ? `https://docs.google.com/viewer?url=${encodeURIComponent(resumeUrl)}&embedded=true`
     : '';
 
-  const downloadUrl = resumeUrl
-    ? (resumeUrl.includes('/raw/upload/')
-        ? resumeUrl
-        : resumeUrl.replace('/upload/', '/upload/fl_attachment/'))
-    : '';
+  const handleDownloadPdf = async () => {
+    if (!resumeUrl) return;
+    setDownloading(true);
+    try {
+      const response = await fetch(resumeUrl);
+      if (!response.ok) throw new Error('Download failed');
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = 'Sweta_Pandey_Resume.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      window.open(resumeUrl, '_blank');
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -75,17 +92,18 @@ export default function ResumeViewer({ resumeUrl }) {
               <span>Google Docs Viewer</span>
             </button>
 
-            {downloadUrl && (
-              <a
-                href={downloadUrl}
-                download="Sweta_Pandey_Resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-200 transition-all hover:-translate-y-0.5"
+            {resumeUrl && (
+              <button
+                onClick={handleDownloadPdf}
+                disabled={downloading}
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-200 transition-all hover:-translate-y-0.5 disabled:opacity-60 cursor-pointer"
               >
-                <i className="ri-download-2-line text-sm"></i>
-                <span>Download PDF</span>
-              </a>
+                {downloading ? (
+                  <><i className="ri-loader-4-line text-sm animate-spin"></i> Downloading...</>
+                ) : (
+                  <><i className="ri-download-2-line text-sm"></i> Download PDF</>
+                )}
+              </button>
             )}
           </div>
         </div>
@@ -141,17 +159,15 @@ export default function ResumeViewer({ resumeUrl }) {
               <div className="text-center space-y-4 py-16">
                 <i className="ri-file-pdf-2-line text-5xl text-indigo-500"></i>
                 <p className="text-slate-700 font-bold">Resume PDF Ready</p>
-                {downloadUrl && (
-                  <a
-                    href={downloadUrl}
-                    download="Sweta_Pandey_Resume.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold text-sm shadow-lg shadow-indigo-200"
+                {resumeUrl && (
+                  <button
+                    onClick={handleDownloadPdf}
+                    disabled={downloading}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-200 disabled:opacity-60 cursor-pointer"
                   >
                     <i className="ri-download-line text-lg"></i>
-                    Download Resume PDF
-                  </a>
+                    <span>Download Resume PDF</span>
+                  </button>
                 )}
               </div>
             )}
