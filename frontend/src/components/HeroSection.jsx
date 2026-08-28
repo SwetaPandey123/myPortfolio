@@ -6,7 +6,7 @@ import { useProfile } from '@/context/ProfileContext';
 
 const ThreeCanvas = dynamic(() => import('./ThreeCanvas'), { ssr: false });
 
-export default function HeroSection({ resumeUrl }) {
+export default function HeroSection({ resumeUrl, projectsCount = 0 }) {
   const roles = [
     'Full Stack Web Developer',
     'B.Tech CSE Student @ LNCT Bhopal',
@@ -131,7 +131,9 @@ export default function HeroSection({ resumeUrl }) {
           {/* Stat Badges */}
           <div className="pt-6 border-t border-slate-200/80 grid grid-cols-3 gap-4 max-w-lg">
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 text-left shadow-2xs">
-              <span className="block text-2xl font-extrabold text-indigo-600">4+</span>
+              <span className="block text-2xl font-extrabold text-indigo-600">
+                {projectsCount > 0 ? `${projectsCount}+` : '4+'}
+              </span>
               <span className="text-xs text-slate-500 font-semibold">Core Projects</span>
             </div>
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 text-left shadow-2xs">

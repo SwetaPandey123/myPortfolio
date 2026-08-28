@@ -97,10 +97,6 @@ export default function Footer() {
                 <i className="ri-mail-line text-indigo-400"></i>
                 <span>pandeysweta612@gmail.com</span>
               </div>
-              <div className="flex items-center space-x-2 pt-1 text-emerald-400 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Render Live Backend Active</span>
-              </div>
             </div>
           </div>
         </div>

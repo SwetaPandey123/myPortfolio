@@ -49,7 +49,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-white">
       <Navbar resumeUrl={resumeUrl} />
-      <HeroSection resumeUrl={resumeUrl} />
+      <HeroSection resumeUrl={resumeUrl} projectsCount={projects.length} />
       <SkillsSection skills={skills} />
       <ProjectsSection projects={projects} />
       <ExperienceSection experience={experience} />

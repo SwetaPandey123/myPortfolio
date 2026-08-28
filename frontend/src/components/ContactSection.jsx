@@ -87,7 +87,6 @@ export default function ContactSection() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900">Email Address</h3>
-                <p className="text-slate-500 text-xs">Live EmailJS + Nodemailer alerts</p>
                 <a
                   href="mailto:pandeysweta612@gmail.com"
                   className="text-indigo-600 font-bold text-base hover:underline mt-1 block"
