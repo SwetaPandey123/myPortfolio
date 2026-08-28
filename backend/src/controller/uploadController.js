@@ -1,17 +1,41 @@
 const { cloudinary, uploadImage, uploadResume } = require('../config/cloudinaryUpload');
 const resumeModel = require('../models/resumeModel');
 
-// Upload Profile Image → Cloudinary → return URL
+const PROFILE_PUBLIC_ID = 'portfolio/sweta_profile_photo';
+const RESUME_PUBLIC_ID  = 'portfolio/Sweta_Pandey_Resume';
+
+// GET /api/upload/settings — return current profileImageUrl + resumeUrl
+const getSettings = async (req, res) => {
+    try {
+        const settings = await resumeModel.findOne();
+        return res.status(200).json({
+            success: true,
+            profileImageUrl: settings?.profileImageUrl || '',
+            resumeUrl:       settings?.resumeUrl       || '',
+        });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+// POST /api/upload/image — upload new profile photo
 const uploadProfileImage = async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
 
-        const imageUrl = req.file.path; // Cloudinary secure URL
+        const imageUrl = req.file.path;
         console.log('✅ Profile image uploaded:', imageUrl);
+
+        // Save to MongoDB
+        await resumeModel.findOneAndUpdate(
+            {},
+            { profileImageUrl: imageUrl },
+            { new: true, upsert: true }
+        );
 
         return res.status(200).json({
             success: true,
-            message: 'Profile image uploaded to Cloudinary!',
+            message: 'Profile image uploaded!',
             url: imageUrl,
         });
     } catch (error) {
@@ -20,15 +44,27 @@ const uploadProfileImage = async (req, res) => {
     }
 };
 
-// Upload Resume PDF → Cloudinary → save URL to MongoDB
+// DELETE /api/upload/image — remove profile photo from Cloudinary + DB
+const deleteProfileImage = async (req, res) => {
+    try {
+        await cloudinary.uploader.destroy(PROFILE_PUBLIC_ID);
+        await resumeModel.findOneAndUpdate({}, { profileImageUrl: '' }, { upsert: true });
+        console.log('🗑️  Profile image deleted');
+        return res.status(200).json({ success: true, message: 'Profile image deleted' });
+    } catch (err) {
+        console.error('Profile delete error:', err);
+        return res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+// POST /api/upload/resume — upload new resume PDF + save to DB
 const uploadResumePdf = async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
 
-        const resumeUrl = req.file.path; // Cloudinary secure URL
+        const resumeUrl = req.file.path;
         console.log('✅ Resume PDF uploaded:', resumeUrl);
 
-        // Auto-save to MongoDB
         await resumeModel.findOneAndUpdate(
             {},
             { resumeUrl },
@@ -37,7 +73,7 @@ const uploadResumePdf = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: 'Resume uploaded to Cloudinary and saved!',
+            message: 'Resume uploaded and saved!',
             url: resumeUrl,
         });
     } catch (error) {
@@ -46,4 +82,17 @@ const uploadResumePdf = async (req, res) => {
     }
 };
 
-module.exports = { uploadImage, uploadResume, uploadProfileImage, uploadResumePdf };
+// DELETE /api/upload/resume — remove resume from Cloudinary + DB
+const deleteResumePdf = async (req, res) => {
+    try {
+        await cloudinary.uploader.destroy(RESUME_PUBLIC_ID, { resource_type: 'raw' });
+        await resumeModel.findOneAndUpdate({}, { resumeUrl: '' }, { upsert: true });
+        console.log('🗑️  Resume deleted');
+        return res.status(200).json({ success: true, message: 'Resume deleted' });
+    } catch (err) {
+        console.error('Resume delete error:', err);
+        return res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+module.exports = { uploadImage, uploadResume, getSettings, uploadProfileImage, deleteProfileImage, uploadResumePdf, deleteResumePdf };

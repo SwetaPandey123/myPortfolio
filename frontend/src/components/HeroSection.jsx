@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { useProfile } from '@/context/ProfileContext';
 
 const ThreeCanvas = dynamic(() => import('./ThreeCanvas'), { ssr: false });
 
@@ -16,6 +17,7 @@ export default function HeroSection({ resumeUrl }) {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const { profileImageUrl } = useProfile();
 
   useEffect(() => {
     const targetText = roles[currentRoleIndex];
@@ -153,7 +155,7 @@ export default function HeroSection({ resumeUrl }) {
               {/* Profile Photo */}
               <div className="relative w-32 h-32 mx-auto rounded-2xl p-1 btn-gradient shadow-lg">
                 <img
-                  src="https://res.cloudinary.com/akphv6j6/image/upload/v1787869354/61476690723.png"
+                  src={profileImageUrl}
                   alt="Sweta Pandey"
                   className="w-full h-full rounded-xl object-cover object-top bg-slate-100"
                 />

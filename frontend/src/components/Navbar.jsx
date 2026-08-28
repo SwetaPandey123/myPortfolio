@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useProfile } from '@/context/ProfileContext';
 
 export default function Navbar({ resumeUrl }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { profileImageUrl } = useProfile();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -37,7 +39,7 @@ export default function Navbar({ resumeUrl }) {
         {/* Brand */}
         <Link href="/" className="flex items-center space-x-3 group shrink-0">
           <img
-            src="https://res.cloudinary.com/akphv6j6/image/upload/v1787869354/61476690723.png"
+            src={profileImageUrl}
             alt="Sweta Pandey"
             className="w-9 h-9 rounded-xl object-cover object-top shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform border-2 border-indigo-400"
           />

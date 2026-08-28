@@ -23,8 +23,13 @@ import {
   updateBlog,
   deleteBlog,
   uploadProfileImage,
-  uploadResumePdf
+  uploadResumePdf,
+  deleteProfileImage,
+  deleteResumePdf,
+  getUploadSettings
 } from '@/utils/api';
+import ImageCropModal from '@/components/ImageCropModal';
+import { useProfile } from '@/context/ProfileContext';
 
 export default function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('projects');
@@ -38,8 +43,11 @@ export default function AdminDashboard({ onLogout }) {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Media upload state
-  const [profileImageUrl, setProfileImageUrl] = useState('https://res.cloudinary.com/akphv6j6/image/upload/v1787869354/61476690723.png');
+  // Profile Context
+  const { profileImageUrl, setProfileImageUrl } = useProfile();
+
+  // Media upload & crop state
+  const [selectedCropImage, setSelectedCropImage] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingResume, setUploadingResume] = useState(false);
   const [uploadMsg, setUploadMsg] = useState({ type: '', text: '' });
@@ -762,40 +770,57 @@ export default function AdminDashboard({ onLogout }) {
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
                   className="hidden"
-                  onChange={async (e) => {
+                  onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    setUploadingImage(true);
-                    setUploadMsg({ type: '', text: '' });
-                    try {
-                      const res = await uploadProfileImage(file);
-                      if (res.success) {
-                        setProfileImageUrl(res.url);
-                        setUploadMsg({ type: 'success', text: `✅ Profile photo uploaded! URL: ${res.url}` });
-                      } else {
-                        setUploadMsg({ type: 'error', text: res.message || 'Upload failed' });
-                      }
-                    } catch (err) {
-                      setUploadMsg({ type: 'error', text: err.response?.data?.message || 'Upload failed. Try again.' });
-                    } finally {
-                      setUploadingImage(false);
-                    }
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      setSelectedCropImage(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                    e.target.value = ''; // Reset input
                   }}
                 />
 
-                <button
-                  onClick={() => imageInputRef.current?.click()}
-                  disabled={uploadingImage}
-                  className="w-full py-3 rounded-2xl btn-gradient text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-60 hover:opacity-90 transition-all shadow-md shadow-indigo-200"
-                >
-                  {uploadingImage ? (
-                    <><i className="ri-loader-4-line animate-spin"></i> Uploading...</>
-                  ) : (
-                    <><i className="ri-upload-2-line"></i> Choose & Upload Photo</>  
-                  )}
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    onClick={() => imageInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="w-full py-3 rounded-2xl btn-gradient text-white font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-60 hover:opacity-90 transition-all shadow-md shadow-indigo-200"
+                  >
+                    {uploadingImage ? (
+                      <><i className="ri-loader-4-line animate-spin text-sm"></i> Uploading...</>
+                    ) : (
+                      <><i className="ri-crop-line text-sm"></i> Crop & Upload New Photo</>  
+                    )}
+                  </button>
 
-                <p className="text-xs text-slate-400 text-center">PNG / JPG / WebP · Max 5MB</p>
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Are you sure you want to delete your profile photo?')) return;
+                      setUploadingImage(true);
+                      setUploadMsg({ type: '', text: '' });
+                      try {
+                        const res = await deleteProfileImage();
+                        if (res.success) {
+                          setProfileImageUrl('https://res.cloudinary.com/akphv6j6/image/upload/v1787869354/61476690723.png');
+                          setUploadMsg({ type: 'success', text: '🗑️ Profile photo deleted!' });
+                        }
+                      } catch (err) {
+                        setUploadMsg({ type: 'error', text: 'Failed to delete photo' });
+                      } finally {
+                        setUploadingImage(false);
+                      }
+                    }}
+                    disabled={uploadingImage}
+                    className="w-full py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-60 transition-all"
+                  >
+                    <i className="ri-delete-bin-line text-sm"></i>
+                    <span>Delete Photo</span>
+                  </button>
+                </div>
+
+                <p className="text-xs text-slate-400 text-center">PNG / JPG / WebP · Interactive Crop Editor included · Max 5MB</p>
 
                 {profileImageUrl && (
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 break-all">
@@ -863,22 +888,76 @@ export default function AdminDashboard({ onLogout }) {
                 }}
               />
 
-              <button
-                onClick={() => resumeInputRef.current?.click()}
-                disabled={uploadingResume}
-                className="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-60 transition-all shadow-md shadow-rose-200"
-              >
-                {uploadingResume ? (
-                  <><i className="ri-loader-4-line animate-spin"></i> Uploading Resume...</>
-                ) : (
-                  <><i className="ri-upload-2-line"></i> Choose & Upload Resume PDF</>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  onClick={() => resumeInputRef.current?.click()}
+                  disabled={uploadingResume}
+                  className="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-60 transition-all shadow-md shadow-rose-200"
+                >
+                  {uploadingResume ? (
+                    <><i className="ri-loader-4-line animate-spin text-sm"></i> Uploading Resume...</>
+                  ) : (
+                    <><i className="ri-upload-2-line text-sm"></i> Upload / Replace Resume PDF</>
+                  )}
+                </button>
+
+                {resumeUrl && (
+                  <button
+                    onClick={async () => {
+                      if (!confirm('Are you sure you want to delete your resume PDF?')) return;
+                      setUploadingResume(true);
+                      setUploadMsg({ type: '', text: '' });
+                      try {
+                        const res = await deleteResumePdf();
+                        if (res.success) {
+                          setResumeUrl('');
+                          setUploadMsg({ type: 'success', text: '🗑️ Resume PDF deleted!' });
+                        }
+                      } catch (err) {
+                        setUploadMsg({ type: 'error', text: 'Failed to delete resume' });
+                      } finally {
+                        setUploadingResume(false);
+                      }
+                    }}
+                    disabled={uploadingResume}
+                    className="w-full py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-60 transition-all"
+                  >
+                    <i className="ri-delete-bin-line text-sm"></i>
+                    <span>Delete Resume PDF</span>
+                  </button>
                 )}
-              </button>
+              </div>
 
               <p className="text-xs text-slate-400 text-center">PDF only · Max 10MB · Auto-saved to database</p>
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── IMAGE CROP MODAL ─────────────────── */}
+      {selectedCropImage && (
+        <ImageCropModal
+          imageSrc={selectedCropImage}
+          onClose={() => setSelectedCropImage(null)}
+          onCropComplete={async (croppedFile) => {
+            setSelectedCropImage(null);
+            setUploadingImage(true);
+            setUploadMsg({ type: '', text: '' });
+            try {
+              const res = await uploadProfileImage(croppedFile);
+              if (res.success) {
+                setProfileImageUrl(res.url);
+                setUploadMsg({ type: 'success', text: `✅ Profile photo cropped & updated everywhere! URL: ${res.url}` });
+              } else {
+                setUploadMsg({ type: 'error', text: res.message || 'Upload failed' });
+              }
+            } catch (err) {
+              setUploadMsg({ type: 'error', text: err.response?.data?.message || 'Upload failed' });
+            } finally {
+              setUploadingImage(false);
+            }
+          }}
+        />
       )}
     </div>
   );

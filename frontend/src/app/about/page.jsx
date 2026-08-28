@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { fetchResume, fetchSkills, fetchExperience } from '@/utils/api';
 import Link from 'next/link';
+import AboutProfileCard from '@/components/AboutProfileCard';
 
 export const metadata = {
   title: 'About Me | Sweta Pandey B.Tech CSE Student & Full Stack Developer',
@@ -75,11 +76,7 @@ export default async function AboutPage() {
           {/* Left Column Profile Card */}
           <div className="lg:col-span-5 flex flex-col justify-between bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6 text-center">
             <div className="space-y-4">
-              <div className="relative w-36 h-36 mx-auto rounded-3xl p-1.5 btn-gradient shadow-xl">
-                <div className="w-full h-full rounded-2xl bg-slate-900 flex items-center justify-center text-white text-5xl font-black">
-                  SP
-                </div>
-              </div>
+              <AboutProfileCard />
 
               <div>
                 <h2 className="text-2xl font-extrabold text-slate-900">Sweta Pandey</h2>

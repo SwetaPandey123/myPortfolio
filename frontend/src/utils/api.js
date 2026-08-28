@@ -188,7 +188,12 @@ export const deleteMessage = async (id) => {
     return response.data;
 };
 
-// Upload APIs — multipart/form-data to Cloudinary via backend
+// Upload APIs
+export const getUploadSettings = async () => {
+    const response = await API.get('/api/upload/settings', { timeout: 30000 });
+    return response.data;
+};
+
 export const uploadProfileImage = async (file) => {
     const form = new FormData();
     form.append('image', file);
@@ -199,6 +204,11 @@ export const uploadProfileImage = async (file) => {
     return response.data;
 };
 
+export const deleteProfileImage = async () => {
+    const response = await API.delete('/api/upload/image', { timeout: 30000 });
+    return response.data;
+};
+
 export const uploadResumePdf = async (file) => {
     const form = new FormData();
     form.append('resume', file);
@@ -206,6 +216,11 @@ export const uploadResumePdf = async (file) => {
         timeout: 60000,
         headers: { 'Content-Type': 'multipart/form-data' },
     });
+    return response.data;
+};
+
+export const deleteResumePdf = async () => {
+    const response = await API.delete('/api/upload/resume', { timeout: 30000 });
     return response.data;
 };
 

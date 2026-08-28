@@ -3,14 +3,26 @@ const router = express.Router();
 const {
     uploadImage,
     uploadResume,
+    getSettings,
     uploadProfileImage,
-    uploadResumePdf
+    deleteProfileImage,
+    uploadResumePdf,
+    deleteResumePdf,
 } = require('../controller/uploadController');
 
-// POST /api/upload/image   — profile photo (jpg/png/webp, max 5MB)
-router.post('/image',  uploadImage.single('image'),   uploadProfileImage);
+// GET  /api/upload/settings — fetch current profileImageUrl + resumeUrl
+router.get('/settings', getSettings);
 
-// POST /api/upload/resume  — resume PDF (max 10MB)
-router.post('/resume', uploadResume.single('resume'),  uploadResumePdf);
+// POST /api/upload/image   — upload profile photo (replaces old)
+router.post('/image',   uploadImage.single('image'),   uploadProfileImage);
+
+// DELETE /api/upload/image — delete profile photo
+router.delete('/image', deleteProfileImage);
+
+// POST /api/upload/resume  — upload resume PDF (replaces old)
+router.post('/resume',  uploadResume.single('resume'),  uploadResumePdf);
+
+// DELETE /api/upload/resume — delete resume PDF
+router.delete('/resume', deleteResumePdf);
 
 module.exports = router;
