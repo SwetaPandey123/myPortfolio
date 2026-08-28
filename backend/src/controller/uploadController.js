@@ -7,11 +7,11 @@ const RESUME_PUBLIC_ID  = 'portfolio/Sweta_Pandey_Resume';
 // GET /api/upload/settings — return current profileImageUrl + resumeUrl
 const getSettings = async (req, res) => {
     try {
-        const settings = await resumeModel.findOne();
+        const settings = await resumeModel.findOne().sort({ updatedAt: -1 });
         return res.status(200).json({
             success: true,
             profileImageUrl: settings?.profileImageUrl || '',
-            resumeUrl:       settings?.resumeUrl       || '',
+            resumeUrl:       settings?.resumeUrl || settings?.resumeURL || '',
         });
     } catch (err) {
         return res.status(500).json({ success: false, message: err.message });

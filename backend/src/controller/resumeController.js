@@ -2,7 +2,13 @@ const resumeModel = require("../models/resumeModel");
 
 const GetResumeController = async (req, res) => {
     try {
-        const resume = await resumeModel.findOne();
+        const resume = await resumeModel.findOne({
+            $or: [
+                { resumeUrl: { $exists: true, $ne: '' } },
+                { resumeURL: { $exists: true, $ne: '' } }
+            ]
+        }).sort({ updatedAt: -1 });
+
         return res.status(200).json({
             success: true,
             message: "resume fetched successfully",
