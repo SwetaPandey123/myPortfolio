@@ -4,18 +4,19 @@ import { useState } from 'react';
 
 export default function ResumeViewer({ resumeUrl }) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
-  const [useGoogleViewer, setUseGoogleViewer] = useState(false);
+  const [useGoogleViewer, setUseGoogleViewer] = useState(true);
 
-  // Try direct PDF embed first, fallback to Google Docs viewer
   const directUrl = resumeUrl || '';
   const googleUrl = resumeUrl
     ? `https://docs.google.com/viewer?url=${encodeURIComponent(resumeUrl)}&embedded=true`
     : '';
 
-  const embedUrl = useGoogleViewer ? googleUrl : directUrl;
+  const embedUrl = useGoogleViewer ? (googleUrl || directUrl) : (directUrl || googleUrl);
 
   const downloadUrl = resumeUrl
-    ? resumeUrl.replace('/upload/', '/upload/fl_attachment/')
+    ? (resumeUrl.includes('/raw/upload/')
+        ? resumeUrl
+        : resumeUrl.replace('/upload/', '/upload/fl_attachment/'))
     : '';
 
   return (
