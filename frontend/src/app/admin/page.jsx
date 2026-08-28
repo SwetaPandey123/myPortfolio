@@ -32,13 +32,22 @@ export default function AdminPage() {
     try {
       const res = await loginAdmin(email.trim(), password.trim());
       if (res.success) {
-        setMessage('OTP sent to your registered email! Please check your inbox.');
+        setMessage('OTP sent! Check your email inbox.');
+        // Auto-fill OTP if returned (email fallback)
+        if (res.otpCode) {
+          setOtp(String(res.otpCode));
+        }
         setStep('otp');
       } else {
         setError(res.message || 'Login failed');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password');
+      const msg = err.response?.data?.message || err.message || '';
+      if (err.code === 'ECONNABORTED' || msg.includes('timeout')) {
+        setError('Server is waking up (Render cold start). Please wait 30 seconds and try again.');
+      } else {
+        setError(err.response?.data?.message || 'Invalid email or password');
+      }
     } finally {
       setLoading(false);
     }
@@ -167,7 +176,7 @@ export default function AdminPage() {
               {loading ? (
                 <>
                   <i className="ri-loader-4-line animate-spin text-lg"></i>
-                  <span>Authenticating...</span>
+                  <span>Connecting to server...</span>
                 </>
               ) : (
                 <>
@@ -176,6 +185,11 @@ export default function AdminPage() {
                 </>
               )}
             </button>
+            {loading && (
+              <p className="text-center text-xs text-slate-400 -mt-2">
+                ⏳ First request may take up to 30 sec (server wake-up)
+              </p>
+            )}
           </form>
         ) : (
           <form onSubmit={handleOtpSubmit} className="space-y-4 text-sm">

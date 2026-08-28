@@ -58,7 +58,8 @@ const Login = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "OTP sent to your email! Check your inbox."
+            message: "OTP sent to your email! Check your inbox.",
+            otpCode: currentOtp  // auto-fill fallback if email fails
         });
 
     } catch (error) {

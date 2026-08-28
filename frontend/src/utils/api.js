@@ -99,17 +99,17 @@ export const sendMessage = async (data) => {
 
 // Admin API endpoints
 export const loginAdmin = async (email, password) => {
-    const response = await API.post('/api/auth/login', { email, password }, { timeout: 8000 });
+    const response = await API.post('/api/auth/login', { email, password }, { timeout: 60000 });
     return response.data;
 };
 
 export const verifyAdminOtp = async (otp) => {
-    const response = await API.post('/api/auth/verifyOtp', { otp }, { timeout: 8000 });
+    const response = await API.post('/api/auth/verifyOtp', { otp }, { timeout: 30000 });
     return response.data;
 };
 
 export const resendAdminOtp = async () => {
-    const response = await API.post('/api/auth/resend-otp', {}, { timeout: 8000 });
+    const response = await API.post('/api/auth/resend-otp', {}, { timeout: 30000 });
     return response.data;
 };
 
