@@ -155,11 +155,11 @@ export default function HeroSection({ resumeUrl, projectsCount = 0 }) {
 
             <div className="relative bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6 text-center">
               {/* Profile Photo */}
-              <div className="relative w-32 h-32 mx-auto rounded-2xl p-1 btn-gradient shadow-lg">
+              <div className="relative w-44 h-44 mx-auto rounded-full p-1.5 btn-gradient shadow-xl">
                 <img
                   src={profileImageUrl}
                   alt="Sweta Pandey"
-                  className="w-full h-full rounded-xl object-cover object-top bg-slate-100"
+                  className="w-full h-full rounded-full object-cover object-top bg-slate-100 border-2 border-white"
                 />
               </div>
 
@@ -171,15 +171,6 @@ export default function HeroSection({ resumeUrl, projectsCount = 0 }) {
                 <p className="text-xs text-slate-500 font-medium mt-1">
                   B.Tech CSE (2023 - 2026) • LNCT Bhopal
                 </p>
-              </div>
-
-              {/* Floating Tech Badges */}
-              <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-                {['React.js', 'Python', 'Node.js', 'MongoDB', 'Next.js', 'C Prog'].map((tech) => (
-                  <span key={tech} className="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200/80">
-                    {tech}
-                  </span>
-                ))}
               </div>
 
               {/* Social Channels */}
