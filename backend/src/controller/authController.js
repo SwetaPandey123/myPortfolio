@@ -58,8 +58,7 @@ const Login = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "OTP sent to your email! Check your inbox.",
-            otpCode: currentOtp  // auto-fill fallback if email fails
+            message: "OTP code sent to your registered email! Check your inbox."
         });
 
     } catch (error) {
@@ -86,7 +85,7 @@ const verifyOtp = async (req, res) => {
         const inputOtp = String(otp).trim();
         const validOtp = String(currentOtp).trim();
 
-        if (inputOtp !== validOtp && inputOtp !== '123456') {
+        if (inputOtp !== validOtp) {
             return res.status(401).json({
                 success: false,
                 message: "Invalid OTP code"

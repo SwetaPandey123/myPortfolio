@@ -32,11 +32,8 @@ export default function AdminPage() {
     try {
       const res = await loginAdmin(email.trim(), password.trim());
       if (res.success) {
-        setMessage('OTP sent! Check your email inbox.');
-        // Auto-fill OTP if returned (email fallback)
-        if (res.otpCode) {
-          setOtp(String(res.otpCode));
-        }
+        setMessage('OTP sent to your email inbox! Please check your email and enter the code.');
+        setOtp(''); // Keep empty for manual entry from email
         setStep('otp');
       } else {
         setError(res.message || 'Login failed');
@@ -80,10 +77,8 @@ export default function AdminPage() {
     try {
       const res = await resendAdminOtp();
       if (res.success) {
-        setMessage('New OTP code generated!');
-        if (res.otpCode) {
-          setOtp(String(res.otpCode));
-        }
+        setMessage('New OTP code sent to your email!');
+        setOtp('');
       }
     } catch (err) {
       setError('Failed to resend OTP');
