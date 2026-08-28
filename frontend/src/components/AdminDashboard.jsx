@@ -497,70 +497,90 @@ export default function AdminDashboard({ onLogout }) {
               {editType === 'project' && (
                 <>
                   <div>
-                    <label className="block text-slate-700 mb-1">Project Title</label>
-                    <input
-                      type="text"
-                      value={formData.title || ''}
+                    <label className="block text-slate-700 mb-1">Project Title *</label>
+                    <input type="text" value={formData.title || ''}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" required />
                   </div>
                   <div>
-                    <label className="block text-slate-700 mb-1">Description</label>
-                    <textarea
-                      rows="3"
-                      value={formData.descriptions || ''}
+                    <label className="block text-slate-700 mb-1">Description *</label>
+                    <textarea rows="3" value={formData.descriptions || ''}
                       onChange={(e) => setFormData({ ...formData, descriptions: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    ></textarea>
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" required />
                   </div>
                   <div>
-                    <label className="block text-slate-700 mb-1">Tech Stack (comma separated)</label>
-                    <input
-                      type="text"
+                    <label className="block text-slate-700 mb-1">Tech Stack (comma separated) *</label>
+                    <input type="text"
                       value={Array.isArray(formData.techStack) ? formData.techStack.join(', ') : formData.techStack || ''}
                       onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                    />
+                      placeholder="React, Node.js, MongoDB"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
                   </div>
+                  <div>
+                    <label className="block text-slate-700 mb-1">Image URL</label>
+                    <input type="url" value={formData.imageURL || ''}
+                      onChange={(e) => setFormData({ ...formData, imageURL: e.target.value })}
+                      placeholder="https://..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Live Link</label>
+                      <input type="url" value={formData.liveLINK || ''}
+                        onChange={(e) => setFormData({ ...formData, liveLINK: e.target.value })}
+                        placeholder="https://..."
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">GitHub URL</label>
+                      <input type="url" value={formData.gitHub || ''}
+                        onChange={(e) => setFormData({ ...formData, gitHub: e.target.value })}
+                        placeholder="https://github.com/..."
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-amber-50 border border-amber-200">
+                    <input type="checkbox" checked={!!formData.featured}
+                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                      className="w-4 h-4 accent-amber-500" />
+                    <span className="font-bold text-amber-800 text-xs">⭐ Mark as Featured Project</span>
+                  </label>
                 </>
               )}
 
               {editType === 'skill' && (
                 <>
                   <div>
-                    <label className="block text-slate-700 mb-1">Tech Name</label>
-                    <input
-                      type="text"
-                      value={formData.Name || ''}
+                    <label className="block text-slate-700 mb-1">Tech Name *</label>
+                    <input type="text" value={formData.Name || ''}
                       onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Category *</label>
+                      <select value={formData.category || 'Frontend'}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900">
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend & Database">Backend & Database</option>
+                        <option value="Core CS & Tools">Core CS & Tools</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Proficiency (e.g. 85%)</label>
+                      <input type="text" value={formData.proficiency || '100%'}
+                        onChange={(e) => setFormData({ ...formData, proficiency: e.target.value })}
+                        placeholder="100%"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-slate-700 mb-1">Category</label>
-                    <select
-                      value={formData.category || 'Frontend'}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                    >
-                      <option value="Frontend">Frontend</option>
-                      <option value="Backend & Database">Backend & Database</option>
-                      <option value="Core CS & Tools">Core CS & Tools</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-slate-700 mb-1">Remix Icon Class (e.g. ri-reactjs-fill, ri-python-fill)</label>
-                    <input
-                      type="text"
-                      value={formData.icon || 'ri-code-line'}
+                    <label className="block text-slate-700 mb-1">Remix Icon Class * (e.g. ri-reactjs-fill)</label>
+                    <input type="text" value={formData.icon || 'ri-code-line'}
                       onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" required />
+                    <p className="text-[10px] text-slate-400 mt-1">Browse icons at <a href="https://remixicon.com" target="_blank" className="text-indigo-500 underline">remixicon.com</a></p>
                   </div>
                 </>
               )}
@@ -568,33 +588,53 @@ export default function AdminDashboard({ onLogout }) {
               {editType === 'blog' && (
                 <>
                   <div>
-                    <label className="block text-slate-700 mb-1">Blog Title</label>
-                    <input
-                      type="text"
-                      value={formData.title || ''}
+                    <label className="block text-slate-700 mb-1">Blog Title *</label>
+                    <input type="text" value={formData.title || ''}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Category</label>
+                      <input type="text" value={formData.category || 'Technology'}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Read Time</label>
+                      <input type="text" value={formData.readTime || '5 min read'}
+                        onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
+                        placeholder="5 min read"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-slate-700 mb-1">Category</label>
-                    <input
-                      type="text"
-                      value={formData.category || 'Technology'}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                    />
+                    <label className="block text-slate-700 mb-1">Excerpt (short summary)</label>
+                    <textarea rows="2" value={formData.excerpt || ''}
+                      onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                      placeholder="Brief summary shown in blog cards..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
                   </div>
                   <div>
-                    <label className="block text-slate-700 mb-1">Full Content</label>
-                    <textarea
-                      rows="6"
-                      value={formData.content || ''}
+                    <label className="block text-slate-700 mb-1">Full Content *</label>
+                    <textarea rows="6" value={formData.content || ''}
                       onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    ></textarea>
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Cover Image URL</label>
+                      <input type="url" value={formData.imageURL || ''}
+                        onChange={(e) => setFormData({ ...formData, imageURL: e.target.value })}
+                        placeholder="https://..."
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Author</label>
+                      <input type="text" value={formData.author || 'Sweta Pandey'}
+                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
                   </div>
                 </>
               )}
@@ -602,24 +642,63 @@ export default function AdminDashboard({ onLogout }) {
               {editType === 'experience' && (
                 <>
                   <div>
-                    <label className="block text-slate-700 mb-1">Degree Title</label>
-                    <input
-                      type="text"
-                      value={formData.title || ''}
+                    <label className="block text-slate-700 mb-1">Title / Degree *</label>
+                    <input type="text" value={formData.title || ''}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    />
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Organization / Institution</label>
+                      <input type="text" value={formData.organization || ''}
+                        onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Type</label>
+                      <select value={formData.type || 'education'}
+                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900">
+                        <option value="education">Education</option>
+                        <option value="work">Work</option>
+                      </select>
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-slate-700 mb-1">Institution</label>
-                    <input
-                      type="text"
-                      value={formData.organization || ''}
-                      onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900"
-                      required
-                    />
+                    <label className="block text-slate-700 mb-1">Description</label>
+                    <textarea rows="3" value={formData.description || ''}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Start Date</label>
+                      <input type="date" value={formData.startDate ? formData.startDate.substring(0,10) : ''}
+                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">End Date</label>
+                      <input type="date" value={formData.endDate ? formData.endDate.substring(0,10) : ''}
+                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                        disabled={!!formData.current}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900 disabled:opacity-40" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Location</label>
+                      <input type="text" value={formData.location || ''}
+                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        placeholder="Bhopal, MP"
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border text-slate-900" />
+                    </div>
+                    <label className="flex items-center gap-2 cursor-pointer mt-5">
+                      <input type="checkbox" checked={!!formData.current}
+                        onChange={(e) => setFormData({ ...formData, current: e.target.checked, endDate: e.target.checked ? '' : formData.endDate })}
+                        className="w-4 h-4 accent-indigo-600" />
+                      <span className="font-semibold text-slate-700 text-xs">Currently Ongoing</span>
+                    </label>
                   </div>
                 </>
               )}

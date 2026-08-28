@@ -53,10 +53,17 @@ export default function ProjectsSection({ projects = [] }) {
 
   const filterOptions = ['All', 'Featured'];
 
+  const hasFeatured = projectList.some((p) => p.featured);
+
+  // Sort: featured first, then rest — only when showing All
+  const sortedList = filter === 'All' && hasFeatured
+    ? [...projectList].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+    : projectList;
+
   const filteredProjects =
     filter === 'Featured'
       ? projectList.filter((p) => p.featured)
-      : projectList;
+      : sortedList;
 
   return (
     <section id="projects" className="py-24 relative bg-slate-50/60 overflow-hidden">
