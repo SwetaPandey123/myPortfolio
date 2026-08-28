@@ -9,6 +9,7 @@ const authroutes = require('./src/routes/authRoutes');
 const resumeRoutes = require('./src/routes/resumeRoutes')
 const messageRoutes = require('./src/routes/messageRoutes');
 const blogRoutes = require('./src/routes/blogRoutes');
+const uploadRoutes = require('./src/routes/uploadRoutes');
 
 const app = express()
 
@@ -48,6 +49,7 @@ app.use('/api/auth', authroutes)
 app.use('/api/resume', resumeRoutes)
 app.use('/api/message', messageRoutes)
 app.use('/api/blog', blogRoutes)
+app.use('/api/upload', uploadRoutes)
 
 app.listen(Port, () => {
     console.log(`Server is running on port ${Port}`);

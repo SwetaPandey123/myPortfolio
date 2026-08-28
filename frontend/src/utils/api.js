@@ -188,4 +188,25 @@ export const deleteMessage = async (id) => {
     return response.data;
 };
 
+// Upload APIs — multipart/form-data to Cloudinary via backend
+export const uploadProfileImage = async (file) => {
+    const form = new FormData();
+    form.append('image', file);
+    const response = await API.post('/api/upload/image', form, {
+        timeout: 60000,
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+};
+
+export const uploadResumePdf = async (file) => {
+    const form = new FormData();
+    form.append('resume', file);
+    const response = await API.post('/api/upload/resume', form, {
+        timeout: 60000,
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+};
+
 export default API;

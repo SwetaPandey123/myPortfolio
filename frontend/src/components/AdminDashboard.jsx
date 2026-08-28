@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   fetchProjects,
   createProject,
@@ -21,7 +21,9 @@ import {
   fetchBlogs,
   createBlog,
   updateBlog,
-  deleteBlog
+  deleteBlog,
+  uploadProfileImage,
+  uploadResumePdf
 } from '@/utils/api';
 
 export default function AdminDashboard({ onLogout }) {
@@ -35,6 +37,14 @@ export default function AdminDashboard({ onLogout }) {
   const [messages, setMessages] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Media upload state
+  const [profileImageUrl, setProfileImageUrl] = useState('https://res.cloudinary.com/akphv6j6/image/upload/v1787869354/61476690723.png');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState({ type: '', text: '' });
+  const imageInputRef = useRef(null);
+  const resumeInputRef = useRef(null);
 
   // Edit Modals state
   const [editingItem, setEditingItem] = useState(null);
@@ -189,7 +199,8 @@ export default function AdminDashboard({ onLogout }) {
           { id: 'skills', label: 'Tech Stack', icon: 'ri-stack-line', count: skills.length },
           { id: 'blogs', label: 'Blog Posts', icon: 'ri-article-line', count: blogs.length },
           { id: 'experience', label: 'Education Records', icon: 'ri-graduation-cap-line', count: experience.length },
-          { id: 'resume', label: 'Resume Drive Link', icon: 'ri-file-pdf-line' },
+          { id: 'resume', label: 'Resume Link', icon: 'ri-file-pdf-line' },
+          { id: 'media', label: '📸 Media Upload', icon: 'ri-upload-cloud-2-line' },
           { id: 'messages', label: 'Contact Messages', icon: 'ri-mail-line', count: messages.length },
         ].map((tab) => (
           <button
@@ -626,6 +637,167 @@ export default function AdminDashboard({ onLogout }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* ── MEDIA TAB ─────────────────────────── */}
+      {activeTab === 'media' && (
+        <div className="space-y-6">
+          {/* Status message */}
+          {uploadMsg.text && (
+            <div className={`p-4 rounded-2xl text-sm font-semibold flex items-center gap-2 ${
+              uploadMsg.type === 'success'
+                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                : 'bg-rose-50 border border-rose-200 text-rose-800'
+            }`}>
+              <i className={uploadMsg.type === 'success' ? 'ri-checkbox-circle-fill text-emerald-600 text-lg' : 'ri-error-warning-fill text-rose-600 text-lg'}></i>
+              {uploadMsg.text}
+            </div>
+          )}
+
+          {/* ── Profile Photo Upload ── */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-xl">
+                <i className="ri-user-photo-line"></i>
+              </div>
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-base">Profile Photo</h3>
+                <p className="text-slate-500 text-xs">Uploads to Cloudinary → auto-updates everywhere on site</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              {/* Preview */}
+              <div className="shrink-0">
+                <img
+                  src={profileImageUrl}
+                  alt="Profile"
+                  className="w-28 h-28 rounded-2xl object-cover object-top border-2 border-indigo-200 shadow-md"
+                />
+              </div>
+
+              <div className="flex-1 space-y-3 w-full">
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setUploadingImage(true);
+                    setUploadMsg({ type: '', text: '' });
+                    try {
+                      const res = await uploadProfileImage(file);
+                      if (res.success) {
+                        setProfileImageUrl(res.url);
+                        setUploadMsg({ type: 'success', text: `✅ Profile photo uploaded! URL: ${res.url}` });
+                      } else {
+                        setUploadMsg({ type: 'error', text: res.message || 'Upload failed' });
+                      }
+                    } catch (err) {
+                      setUploadMsg({ type: 'error', text: err.response?.data?.message || 'Upload failed. Try again.' });
+                    } finally {
+                      setUploadingImage(false);
+                    }
+                  }}
+                />
+
+                <button
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="w-full py-3 rounded-2xl btn-gradient text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-60 hover:opacity-90 transition-all shadow-md shadow-indigo-200"
+                >
+                  {uploadingImage ? (
+                    <><i className="ri-loader-4-line animate-spin"></i> Uploading...</>
+                  ) : (
+                    <><i className="ri-upload-2-line"></i> Choose & Upload Photo</>  
+                  )}
+                </button>
+
+                <p className="text-xs text-slate-400 text-center">PNG / JPG / WebP · Max 5MB</p>
+
+                {profileImageUrl && (
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 break-all">
+                    <span className="font-bold text-slate-700">Current URL: </span>{profileImageUrl}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Resume PDF Upload ── */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 text-xl">
+                <i className="ri-file-pdf-2-line"></i>
+              </div>
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-base">Resume PDF</h3>
+                <p className="text-slate-500 text-xs">Uploads to Cloudinary → auto-saves URL to MongoDB → live on /resume</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {/* Current resume preview */}
+              {resumeUrl && (
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-rose-50 border border-rose-100">
+                  <i className="ri-file-pdf-2-line text-2xl text-rose-500"></i>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-700">Current Resume</p>
+                    <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
+                      className="text-xs text-indigo-600 hover:underline truncate block">
+                      {resumeUrl}
+                    </a>
+                  </div>
+                  <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-600 text-xs font-bold hover:bg-rose-50">
+                    View
+                  </a>
+                </div>
+              )}
+
+              <input
+                ref={resumeInputRef}
+                type="file"
+                accept="application/pdf"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setUploadingResume(true);
+                  setUploadMsg({ type: '', text: '' });
+                  try {
+                    const res = await uploadResumePdf(file);
+                    if (res.success) {
+                      setResumeUrl(res.url);
+                      setUploadMsg({ type: 'success', text: `✅ Resume uploaded & saved! Now live on /resume page.` });
+                    } else {
+                      setUploadMsg({ type: 'error', text: res.message || 'Upload failed' });
+                    }
+                  } catch (err) {
+                    setUploadMsg({ type: 'error', text: err.response?.data?.message || 'Upload failed. Try again.' });
+                  } finally {
+                    setUploadingResume(false);
+                  }
+                }}
+              />
+
+              <button
+                onClick={() => resumeInputRef.current?.click()}
+                disabled={uploadingResume}
+                className="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-60 transition-all shadow-md shadow-rose-200"
+              >
+                {uploadingResume ? (
+                  <><i className="ri-loader-4-line animate-spin"></i> Uploading Resume...</>
+                ) : (
+                  <><i className="ri-upload-2-line"></i> Choose & Upload Resume PDF</>
+                )}
+              </button>
+
+              <p className="text-xs text-slate-400 text-center">PDF only · Max 10MB · Auto-saved to database</p>
+            </div>
           </div>
         </div>
       )}
